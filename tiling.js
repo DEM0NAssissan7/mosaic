@@ -45,11 +45,15 @@ class window_descriptor{
     }
     get_area_right(window) {
         let new_width = Math.max(this.x + this.width + enums.window_spacing + window.width, total_width);
-        return new_width - total_height; // Make the windows as square as possible
+        let display_ratio = max_width / max_height;
+        let new_ratio = new_width / total_height;
+        return Math.abs(display_ratio - new_ratio); // Make the windows as close to the display ratio as possible. Looks nice :)
     }
     get_area_under(window) {
         let new_height = Math.max(this.y + this.height + enums.window_spacing + window.height, total_height);
-        return new_height - total_width;
+        let display_ratio = max_width / max_height;
+        let new_ratio = total_width / new_height;
+        return Math.abs(display_ratio - new_ratio);
     }
     draw_window(meta_windows, x_offset, y_offset) {
         windowing.move_window(meta_windows[this.index],
