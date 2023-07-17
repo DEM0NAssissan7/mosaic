@@ -45,11 +45,11 @@ class window_descriptor{
     }
     get_area_right(window) {
         let new_width = Math.max(this.x + this.width + enums.window_spacing + window.width, total_width);
-        return new_width * total_height;
+        return new_width - total_height; // Make the windows as square as possible
     }
     get_area_under(window) {
         let new_height = Math.max(this.y + this.height + enums.window_spacing + window.height, total_height);
-        return total_width * new_height;
+        return new_height - total_width;
     }
     draw_window(meta_windows, x_offset, y_offset) {
         windowing.move_window(meta_windows[this.index],
