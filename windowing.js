@@ -67,6 +67,5 @@ function move_back_window(window) {
     }
     window.change_workspace(previous_workspace); // Move window to previous workspace
     previous_workspace.activate(get_timestamp()); // Switch to it
-    // global.workspace_manager.remove_workspace(workspace, get_timestamp()); // Clean old workspace
     return previous_workspace;
 }
