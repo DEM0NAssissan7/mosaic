@@ -37,6 +37,7 @@ function configure_window(window) {
 function win_to_new_workspace(window, switch_to_new) {
     if(!window) return;
     let window_workspace = window.get_workspace();
+    if(!window_workspace) return;
     let adjacent_workspace = window_workspace.get_neighbor(-4); // Get workspace to the right
     let workspace;
     // This is to prevent an infinite workspace creation bug
