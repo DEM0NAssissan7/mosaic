@@ -85,7 +85,7 @@ class Extension {
     }
 
     enable() {
-        console.log("Starting Mosaic layout manager.");
+        console.log("[MOSAIC]: Starting Mosaic layout manager.");
         
         let size_changed = false;
         let event_timeout;
@@ -141,6 +141,7 @@ class Extension {
     }
 
     disable() {
+        console.log("[MOSAIC]: Disabling Mosaic layout manager.");
         // Disconnect all events
         for(let eventid of wm_eventids)
             global.window_manager.disconnect(eventid);
