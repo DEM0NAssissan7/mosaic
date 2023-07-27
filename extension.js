@@ -58,9 +58,9 @@ class Extension {
                     maximized_windows[id] = workspace_manager.get_active_workspace_index(); // Mark window as maximized
                     windowing.sort_workspace_windows(workspace); // Sort the workspace where the window moved back to
             } else if(
-            window.maximized_horizontally === false ||
-            window.maximized_vertically === false && // If window is not maximized
-            maximized_windows[id] === workspace_index // If the workspace anatomy has not changed
+                (window.maximized_horizontally === false ||
+                window.maximized_vertically === false) && // If window is not maximized
+                maximized_windows[id] === workspace.index() // If the workspace anatomy has not changed
             ) {
                 maximized_windows[id] = false;
                 windowing.move_back_window(window);
