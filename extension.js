@@ -38,6 +38,10 @@ class Extension {
         }
     }
 
+    sort_window_workspace(_, window) {
+        windowing.sort_workspace_windows(window.get_workspace());
+    }
+
     enable() {
         console.log("Starting Mosaic layout manager.");
         
@@ -75,11 +79,7 @@ class Extension {
             }
         }));
 
-        eventids.push(global.display.connect(
-            'window-created',
-            (_, window) => {
-                windowing.sort_workspace_windows(window.get_workspace());
-            })); // Sort workspace windows when a new window is created
+        eventids.push(global.display.connect('window-created', this.sort_window_workspace));
 
         // Sort all workspaces at startup
         this.sort_all_workspaces();
