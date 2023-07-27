@@ -80,6 +80,9 @@ class Extension {
         }));
 
         eventids.push(global.display.connect('window-created', this.sort_window_workspace));
+        eventids.push(global.window_manager.connect('destroy', (_, win) => {
+            this.sort_window_workspace(_, win.meta_window);
+        }));
 
         // Sort all workspaces at startup
         this.sort_all_workspaces();
