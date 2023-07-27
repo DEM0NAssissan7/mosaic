@@ -69,9 +69,7 @@ function sort_windows(windows, work_area, move_maximized_windows) {
         width: 0,
         height: 0
     };
-    let sorted_windows = [];
-    let levels = [[]];
-    let current_level = 0;
+    let levels = [];
     let width = 0;
     let height = 0;
     for(let i = 0; i < windows.length; i++) { // Get width of window collection
@@ -86,13 +84,37 @@ function sort_windows(windows, work_area, move_maximized_windows) {
 
         // Get width and height of window collection
         let frame = window.get_frame_rect();
-        space.width += frame.width;
-        space.height = Math.max(space.height, frame.height);
+        if(frame.width + width > work_area.width) {
+            space.height += height + enums.window_spacing;
+            space.width += width;
+            levels.push({width: width, height: height});
+            height = 0;
+            width = 0;
+        }
+        width += frame.width + enums.window_spacing;
+        height = Math.max(height, frame.height);
     }
-    let x = (work_area.width - space.width) / 2;
+    if(height !== 0 || width !== 0) levels.push({width: width, height: height});
+    space.width += width;
+    space.height += height;
+    let current_level_index = 0;
+    let level = levels[current_level_index];
+    if(!level)
+        return;
+    let center = {x: work_area.width / 2 + work_area.x, y: work_area.height / 2 + work_area.y}
+    let x = (work_area.width - level.width) / 2 + work_area.x;
+    let y = (work_area.height - space.height) / 2 + work_area.y;
+
     for(let window of windows) {
         let frame = window.get_frame_rect();
-        move_window(window, false, x, (work_area.height - frame.height) / 2, frame.width, frame.height);
+        if(frame.width + x > work_area.width) {
+            y += level.height + enums.window_spacing;
+            current_level_index++;
+            level = levels[current_level_index];
+
+            x = (work_area.width - level.width) / 2 + work_area.x;
+        }
+        move_window(window, false, x, y, frame.width, frame.height);
         x += frame.width + enums.window_spacing;
     }
 }
