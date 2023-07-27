@@ -37,7 +37,7 @@ function win_to_new_workspace(window) {
 function move_back_window(window) {
     let workspace = window.get_workspace();
     let previous_workspace = global.workspace_manager.get_workspace_by_index(workspace.index() - 1);
-    window.change_workspace(previous_workspace); // Move to previous workspace
+    window.change_workspace(previous_workspace); // Move window to previous workspace
     previous_workspace.activate(0); // Switch to it
     global.workspace_manager.remove_workspace(workspace); // Clean old workspace
     return previous_workspace;
