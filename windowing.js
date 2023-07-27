@@ -36,10 +36,14 @@ function win_to_new_workspace(window) {
 
 function move_back_window(window) {
     let workspace = window.get_workspace();
-    let previous_workspace = global.workspace_manager.get_workspace_by_index(workspace.index() - 1);
+    let previous_workspace = workspace.get_neighbor(-3);
+    if(!previous_workspace) {
+        console.error("There is no workspace to the left.");
+        return;
+    }
     window.change_workspace(previous_workspace); // Move window to previous workspace
     previous_workspace.activate(0); // Switch to it
-    global.workspace_manager.remove_workspace(workspace); // Clean old workspace
+    global.workspace_manager.remove_workspace(workspace, 0); // Clean old workspace
     return previous_workspace;
 }
 
@@ -64,26 +68,27 @@ function sort_windows(windows, work_area, move_maximized_windows) {
     let sorted_windows = [];
     let levels = [[]];
     let current_level = 0;
-    for(let i = 0; i < windows.length; i++) {
+    let width = 0;
+    let height = 0;
+    for(let i = 0; i < windows.length; i++) { // Get width of window collection
         let window = windows[i];
         if(window.maximized_horizontally === true && window.maximized_vertically === true && get_all_workspace_windows().length !== 1) {
             if(move_maximized_windows) // If we are wanting to deal with maximized windows, move them to a new workspace.
                 win_to_new_workspace(window);
+            windows.splice(i, 1);
+            i--;
             continue; // Skip windows that are maximized otherwise. They will be dealt with by the size-changed listener.
         }
 
-        // Window sorter
+        // Get width and height of window collection
         let frame = window.get_frame_rect();
-        if(space.height < space.width) { // If the rectangle is more stretched horizontally, add more height
-            if(frame.width <= work_area.width - space.width) {
-                space.height += frame.height;
-                space.width += Math.max(0, frame.width - space.width);
-            }
-        } else { // If the rectangle is more vertically stretched, add more width
-            if(frame.height <= work_area.height - space.height) {
-                space.width += frame.width;
-                space.height += Math.max(0, frame.height - space.height);
-            }
-        }
+        space.width += frame.width;
+        space.height = Math.max(space.height, frame.height);
+    }
+    let x = (work_area.width - space.width) / 2;
+    for(let window of windows) {
+        let frame = window.get_frame_rect();
+        move_window(window, false, x, (work_area.height - frame.height) / 2, frame.width, frame.height);
+        x += frame.width + enums.window_spacing;
     }
 }
