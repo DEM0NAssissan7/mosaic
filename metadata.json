@@ -1,0 +1,8 @@
+{
+  "name": "Mosaic",
+  "description": "Next-generation window management",
+  "uuid": "mosaic@gnome.org",
+  "shell-version": [
+    "44"
+  ]
+}
