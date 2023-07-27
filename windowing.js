@@ -53,9 +53,6 @@ function sort_workspace_windows(workspace, move_maximized_windows) {
     sort_windows(windows, work_area, move_maximized_windows);
 }
 
-function newsort(windows, work_area, move_maximized_windows) {
-
-}
 
 function sort_windows(windows, work_area, move_maximized_windows) {
     /* Window sorting algorithm
