@@ -47,30 +47,30 @@ class Extension {
             (_, win) => {
             if(!enabled) {
                 enabled = true;
-            let window = win.meta_window;
-            let id = window.get_id();
+                let window = win.meta_window;
+                let id = window.get_id();
                 let workspace = workspace_manager.get_active_workspace();
-
-            if(window.maximized_horizontally === true && window.maximized_vertically === true && windowing.get_all_workspace_windows().length !== 1) {
-                // If maximized (and not alone), move to new workspace and activate it
-                let new_workspace = windowing.win_to_new_workspace(window);
-                new_workspace.activate(0);
-                /* We mark the window as activated by using its id to index an array
-                    We put the value as the active workspace index so that if the workspace anatomy
-                    of the current workspace changes, it does not move the maximized window to an unrelated
-                    window.
-                */
+    
+                if(window.maximized_horizontally === true && window.maximized_vertically === true && windowing.get_all_workspace_windows().length !== 1) {
+                    // If maximized (and not alone), move to new workspace and activate it
+                    let new_workspace = windowing.win_to_new_workspace(window);
+                    new_workspace.activate(0);
+                    /* We mark the window as activated by using its id to index an array
+                        We put the value as the active workspace index so that if the workspace anatomy
+                        of the current workspace changes, it does not move the maximized window to an unrelated
+                        window.
+                    */
                     maximized_windows[id] = workspace_manager.get_active_workspace_index(); // Mark window as maximized
                     windowing.sort_workspace_windows(workspace); // Sort the workspace where the window moved back to
-            } else if(
+                } else if(
                 (window.maximized_horizontally === false ||
                 window.maximized_vertically === false) && // If window is not maximized
                 maximized_windows[id] === workspace.index() // If the workspace anatomy has not changed
-            ) {
-                maximized_windows[id] = false;
-                windowing.move_back_window(window);
-            }
-            windowing.sort_workspace_windows(workspace_manager.get_active_workspace()); // Sort active workspace
+                ) {
+                    maximized_windows[id] = false;
+                    windowing.move_back_window(window);
+                }
+                windowing.sort_workspace_windows(workspace_manager.get_active_workspace()); // Sort active workspace
                 enabled = false;
             }
         }));
