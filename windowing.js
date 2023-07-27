@@ -72,7 +72,7 @@ function sort_windows(windows, work_area, move_maximized_windows) {
     let height = 0;
     for(let i = 0; i < windows.length; i++) { // Get width of window collection
         let window = windows[i];
-        if((window.maximized_horizontally === true || window.maximized_vertically === true) && get_all_workspace_windows().length !== 1) {
+        if(window.maximized_horizontally === true && window.maximized_vertically === true && get_all_workspace_windows().length !== 1) {
             if(move_maximized_windows) // If we are wanting to deal with maximized windows, move them to a new workspace.
                 win_to_new_workspace(window);
             windows.splice(i, 1);
