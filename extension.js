@@ -69,9 +69,11 @@ class Extension {
             windowing.sort_workspace_windows(workspace_manager.get_active_workspace()); // Sort active workspace
         }));
 
-        eventids.push(global.display.connect('window-created', (_, win) => { // Sort workspace windows when a new window is created
-            windowing.sort_workspace_windows(win.meta_window.get_workspace());
-        }));
+        eventids.push(global.display.connect(
+            'window-created',
+            (_, window) => {
+                windowing.sort_workspace_windows(window.get_workspace());
+            })); // Sort workspace windows when a new window is created
 
         // Sort all workspaces at startup
         this.sort_all_workspaces();
