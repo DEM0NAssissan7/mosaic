@@ -41,7 +41,12 @@ class Extension {
     enable() {
         console.log("Starting Mosaic layout manager.");
         
-        eventids.push(global.window_manager.connect('size-changed', (_, win) => { // When size is changed
+        let enabled = false; // This prevents recursion
+        eventids.push(global.window_manager.connect(
+            'size-changed', // When size is changed
+            (_, win) => {
+            if(!enabled) {
+                enabled = true;
             let window = win.meta_window;
             let id = window.get_id();
                 let workspace = workspace_manager.get_active_workspace();
@@ -66,6 +71,8 @@ class Extension {
                 windowing.move_back_window(window);
             }
             windowing.sort_workspace_windows(workspace_manager.get_active_workspace()); // Sort active workspace
+                enabled = false;
+            }
         }));
 
         eventids.push(global.display.connect(
