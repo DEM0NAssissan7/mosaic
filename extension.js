@@ -44,7 +44,7 @@ class Extension {
         eventids.push(global.window_manager.connect('size-changed', (_, win) => { // When size is changed
             let window = win.meta_window;
             let id = window.get_id();
-            let workspace_index = workspace_manager.get_active_workspace_index();
+                let workspace = workspace_manager.get_active_workspace();
 
             if(window.maximized_horizontally === true && window.maximized_vertically === true && windowing.get_all_workspace_windows().length !== 1) {
                 // If maximized (and not alone), move to new workspace and activate it
@@ -58,6 +58,7 @@ class Extension {
                 maximized_windows[id] = workspace_index; // Mark window as maximized
                 windowing.sort_workspace_windows( // Sort the workspace where the window used to be
                     new_workspace.get_neighbor(-3)); // Get left neighbor
+                    windowing.sort_workspace_windows(workspace); // Sort the workspace where the window moved back to
             } else if(
             window.maximized_horizontally === false ||
             window.maximized_vertically === false && // If window is not maximized
