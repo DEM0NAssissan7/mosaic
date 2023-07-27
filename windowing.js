@@ -98,7 +98,6 @@ function sort_windows(windows, work_area, move_maximized_windows) {
     let level = levels[current_level_index];
     if(!level)
         return;
-    let center = {x: work_area.width / 2 + work_area.x, y: work_area.height / 2 + work_area.y}
     let x = (work_area.width - level.width) / 2 + work_area.x;
     let y = (work_area.height - space.height) / 2 + work_area.y;
 
