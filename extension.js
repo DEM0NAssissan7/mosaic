@@ -55,9 +55,7 @@ class Extension {
                     of the current workspace changes, it does not move the maximized window to an unrelated
                     window.
                 */
-                maximized_windows[id] = workspace_index; // Mark window as maximized
-                windowing.sort_workspace_windows( // Sort the workspace where the window used to be
-                    new_workspace.get_neighbor(-3)); // Get left neighbor
+                    maximized_windows[id] = workspace_manager.get_active_workspace_index(); // Mark window as maximized
                     windowing.sort_workspace_windows(workspace); // Sort the workspace where the window moved back to
             } else if(
             window.maximized_horizontally === false ||
