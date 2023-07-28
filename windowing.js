@@ -1,17 +1,9 @@
 const extension = imports.misc.extensionUtils.getCurrentExtension();
 
 const enums = extension.imports.enums;
-const Meta = imports.gi.Meta;
 
 function get_all_windows() {
-    let windows = [];
-    let n_workspaces = global.workspace_manager.get_n_workspaces();
-    for(let i = 0; i < n_workspaces; i++) {
-        let workspace_windows = global.workspace_manager.get_workspace_by_index(i).list_windows();
-        for(let j = 0; j < workspace_windows.length; j++)
-            windows.push(workspace_windows[j]);
-    }
-    return windows;
+    return global.display.list_all_windows();
 }
 
 function get_all_workspace_windows() {
@@ -69,13 +61,12 @@ function sort_windows(windows, work_area, move_maximized_windows) {
     let levels = [];
     let width = 0;
     let height = 0;
-    for(let i = 0; i < windows.length; i++) { // Get width of window collection
+    let windows_buffer = [];
+    for(let i = 0; i < windows.length; i++) {
         let window = windows[i];
-        if(window.maximized_horizontally === true && window.maximized_vertically === true && get_all_workspace_windows().length !== 1) {
-            if(move_maximized_windows) // If we are wanting to deal with maximized windows, move them to a new workspace.
+        if((window.maximized_horizontally === true && window.maximized_vertically === true) && get_all_workspace_windows().length !== 1) {
+            if(move_maximized_windows && window.maximized_horizontally === true && window.maximized_vertically === true) // If we are wanting to deal with maximized windows, move them to a new workspace.
                 win_to_new_workspace(window);
-            windows.splice(i, 1);
-            i--;
             continue; // Skip windows that are maximized otherwise. They will be dealt with by the size-changed listener.
         }
 
@@ -84,33 +75,101 @@ function sort_windows(windows, work_area, move_maximized_windows) {
         if(frame.width + width > work_area.width) {
             space.height += height + enums.window_spacing;
             space.width += width;
-            levels.push({width: width, height: height});
+            levels.push({
+                width: width,
+                height: height,
+                windows: windows_buffer
+            });
             height = 0;
             width = 0;
+            windows_buffer = [];
         }
         width += frame.width + enums.window_spacing;
         height = Math.max(height, frame.height);
+        windows_buffer.push({
+            index: i,
+            children: [],
+            frame: {
+                x: frame.x,
+                y: frame.y,
+                width: frame.width,
+                height: frame.height
+            }
+        });
     }
-    if(height !== 0 || width !== 0) levels.push({width: width, height: height});
+    levels.push({
+        width: width,
+        height: height,
+        windows: windows_buffer
+    });
     space.width += width;
     space.height += height;
     let current_level_index = 0;
     let level = levels[current_level_index];
     if(!level)
         return;
-    let x = (work_area.width - level.width) / 2 + work_area.x;
-    let y = (work_area.height - space.height) / 2 + work_area.y;
 
-    for(let window of windows) {
-        let frame = window.get_frame_rect();
-        if(frame.width + x > work_area.width) {
-            y += level.height + enums.window_spacing;
-            current_level_index++;
-            level = levels[current_level_index];
-
-            x = (work_area.width - level.width) / 2 + work_area.x;
+    for(let i = 0; i < levels.length; i++) { // Check available vertical space in other levels
+        let level = levels[i];
+        for(let j = 0; j < level.windows.length; j++) {
+            let frame = level.windows[j].frame;
+            (function() {
+                for(let k = 0; k < levels.length; k++) {
+                    let _level = levels[k];
+                    for(let _window of _level.windows) {
+                        let _frame = _window.frame;
+                        // See if the window will fit in the open space under the window
+                        let height = _frame.height + enums.window_spacing;
+                        for(let child of _window.children) // Account children heights
+                            height += child.frame.height + enums.window_spacing;
+                        if(frame.width <= _frame.width && frame.height <= _level.height - height) { // See if the window has space
+                            _window.children.push({
+                                index: level.windows[j].index,
+                                frame: {
+                                    x: frame.x,
+                                    y: frame.y,
+                                    width: frame.width,
+                                    height: frame.height
+                                }
+                            });
+                            level.width -= frame.width; // Subtract window from width
+                            level.windows.splice(j, 1);
+                            if(level.height === frame.height) { // Fix height if changed
+                                space.height -= level.height;
+                                level.height = 0;
+                                for(let window of level.windows)
+                                    level.height = Math.max(level.height, window.frame.height);
+                                space.height += level.height;
+                            }
+                            j--;
+                            return;
+                        }
+                    }
+                }
+            })()
+            if(level.windows.length === 0) {
+                space.height -= level.height;
+                levels.splice(i, 1);
+                i--;
+                continue;
+            }
         }
-        move_window(window, false, x, y, frame.width, frame.height);
-        x += frame.width + enums.window_spacing;
+    }
+    let y = (work_area.height - space.height) / 2 + work_area.y;
+    for(let level of levels) {
+        let x = (work_area.width - level.width) / 2 + work_area.x;
+
+        for(let window of level.windows) {
+            let frame = window.frame;
+            move_window(windows[window.index], false, x, y, frame.width, frame.height);
+            let _y = y + frame.height + enums.window_spacing;
+            for(let child of window.children) {
+                let _frame = child.frame;
+                move_window(windows[child.index], false, x, _y, _frame.width, _frame.height);
+                _y += _frame.height + enums.window_spacing;
+            }
+            x += frame.width + enums.window_spacing;
+        }
+        y += level.height + enums.window_spacing;
     }
 }
