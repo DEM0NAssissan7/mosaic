@@ -238,18 +238,18 @@ function sort_windows(windows, work_area, move_maximized_windows) {
         let max_offset = 0;
         for(let window of level.windows) {
             let frame = window.frame;
-            let offset = 0;
             // Get total level area height
             let height = frame.height;
             for(let child of window.children)
                 height += child.frame.height;
-            // Align windows towards the middle (in their level)
-            let window_middle = y + height / 2
+            // Align window towards the middle (in its level)
+            let window_middle = y + height / 2;
+            let offset = 0;
             if(frame.height !== level.height) {
                 offset = center.y - window_middle;
                 // Check to make sure window does not cross level boundaries
                 if(offset + height > level.height) {
-                    offset -= height - frame.height;
+                    offset = offset + height - frame.height;
                 }
                 if(offset < 0) {
                     offset = 0;
