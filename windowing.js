@@ -42,6 +42,22 @@ function move_back_window(window) {
 function sort_workspace_windows(workspace, move_maximized_windows) {
     let windows = workspace.list_windows();
     let work_area = workspace.get_work_area_for_monitor(0);
+    // Check for snap tiled windows and adjust work area accordingly
+    for(let i = 0; i < windows.length; i++) {
+        let window = windows[i];
+        if(window.maximized_horizontally === false && window.maximized_vertically === true && windows.length !== 1) {
+            let frame = window.get_frame_rect();
+            let spaced_width = frame.width + enums.window_spacing;
+            if(frame.x + frame.width === work_area.width)
+                work_area.width -= spaced_width;
+            if(frame.x === work_area.x) {
+                work_area.x += spaced_width;
+                work_area.width -= spaced_width;
+            }
+            windows.splice(i, 1);
+            i--;
+        }
+    }
     sort_windows(windows, work_area, move_maximized_windows);
 }
 
