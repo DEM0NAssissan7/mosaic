@@ -18,10 +18,11 @@ function configure_window(window) {
     
 }
 
-function win_to_new_workspace(window) {
+function win_to_new_workspace(window, switch_to_new) {
     let workspace = global.workspace_manager.append_new_workspace(false, 0); // Create new workspace
     let active_workspace_index = global.workspace_manager.get_active_workspace_index();
     global.workspace_manager.reorder_workspace(workspace, active_workspace_index + 1) // Move the new workspace to the right of the current workspace
+    if(switch_to_new) workspace.activate(0);
     window.change_workspace(workspace); // Move window to new workspace
     return workspace; // Return new workspace
 }
@@ -39,28 +40,118 @@ function move_back_window(window) {
     return previous_workspace;
 }
 
-function sort_workspace_windows(workspace, move_maximized_windows) {
-    let windows = workspace.list_windows();
-    let work_area = workspace.get_work_area_for_monitor(0);
-    // Check for snap tiled windows and adjust work area accordingly
-    for(let i = 0; i < windows.length; i++) {
-        let window = windows[i];
-        if(window.maximized_horizontally === false && window.maximized_vertically === true && windows.length !== 1) {
-            let frame = window.get_frame_rect();
-            let spaced_width = frame.width + enums.window_spacing;
-            if(frame.x + frame.width === work_area.width)
-                work_area.width -= spaced_width;
-            if(frame.x === work_area.x) {
-                work_area.x += spaced_width;
-                work_area.width -= spaced_width;
-            }
-            windows.splice(i, 1);
-            i--;
-        }
+function create_window_enum(window, index) {
+    let frame = window.get_frame_rect();
+    return {
+        index: index,
+        children: [],
+        x: frame.x,
+        y: frame.y,
+        width: frame.width,
+        height: frame.height,
+        total_height: frame.height,
+        maximized_horizontally: window.maximized_horizontally,
+        maximized_vertically: window.maximized_vertically
     }
-    sort_windows(windows, work_area, move_maximized_windows);
 }
 
+function sort_workspace_windows(workspace, move_maximized_windows) {
+    let meta_windows = workspace.list_windows();
+
+    // Put needed window info into an enum so it can be transferred between arrays
+    let windows = [];
+    for(let i = 0; i < meta_windows.length; i++) {
+        windows.push(create_window_enum(meta_windows[i], i));
+    }
+
+    let n_displays = global.display.get_n_monitors(); // Sort on all monitors
+    for(let i = 0; i < n_displays; i++) {
+        let work_area = workspace.get_work_area_for_monitor(i);
+        // Check for snap tiled windows and adjust work area accordingly
+        for(let i = 0; i < windows.length; i++) {
+            let window = windows[i];
+            if(window.maximized_horizontally === false && window.maximized_vertically === true && windows.length !== 1) {
+                let spaced_width = window.width + enums.window_spacing;
+                if(window.x + window.width === work_area.width)
+                    work_area.width -= spaced_width;
+                if(window.x === work_area.x) {
+                    work_area.x += spaced_width;
+                    work_area.width -= spaced_width;
+                }
+                windows.splice(i, 1);
+                i--;
+            }
+        }
+        z_sort(meta_windows, windows, work_area, move_maximized_windows);
+    }
+}
+
+function z_sort(meta_windows, windows, work_area, move_maximized_windows) {
+    if(windows.length === 0)
+        return;
+    let space = {
+        width: 0,
+        height: 0
+    };
+
+    let horizontal_windows = [];
+    // Now, sort the windows
+    for(let window of windows) {
+        // Check if the window is maximized, and move it over if it is
+        if((window.maximized_horizontally === true && window.maximized_vertically === true) && get_all_workspace_windows().length !== 1) {
+            if(move_maximized_windows) // If we are wanting to deal with maximized windows, move them to a new workspace.
+                win_to_new_workspace(window, false);
+            continue; // Skip windows that are maximized otherwise. They will be dealt with by the size-changed listener.
+        }
+        let placed_horizontal_area = (space.width + enums.window_spacing + window.width) * Math.max(window.height, space.height);
+        let will_exceed_horizontally = space.width + enums.window_spacing + window.width > work_area.width;
+        let parent_index = null;
+        for(let i = 0; i < horizontal_windows.length; i++) {
+            let _window = horizontal_windows[i];
+            if(window.width > _window.width) // Check window can properly fit under
+                continue;
+            // Check if space when window is placed to the right will be greater than being placed under
+            let new_height = _window.total_height + enums.window_spacing + window.height;
+            if(!will_exceed_horizontally) {
+                if(placed_horizontal_area > new_height * space.width && // See if it is more optimal to place window under
+                    new_height <= work_area.height // Make sure that it will fit in the bounds of the screen
+                ) {
+                    parent_index = i;
+                }
+            } else if (new_height <= work_area.height){
+                parent_index = i;
+            }
+        }
+        if(parent_index === null){
+            if(space.width + enums.window_spacing + window.width > work_area.width) { // If the window cannot fit, send it to a new workspace and switch
+                continue; // Undefined behavior (for now)
+            }
+            horizontal_windows.push(window);
+            space.width += window.width + enums.window_spacing;
+            space.height = Math.max(space.height, window.height);
+        } else if(parent_index >= 0) {
+            let parent = horizontal_windows[parent_index];
+            parent.children.push(window);
+            parent.total_height += window.height + enums.window_spacing;
+            space.height = Math.max(space.height, parent.total_height);
+        }
+    }
+
+    // TODO: Add multi-pass sorting code to get optimal shape for windows
+
+    // Draw the windows on-screen
+    let x = (work_area.width - space.width) / 2 + work_area.x;
+    let y = (work_area.height - space.height) / 2 + work_area.y;
+    for(let window of horizontal_windows) {
+        move_window(meta_windows[window.index], false, x, y, window.width, window.height);
+        let _y = y + window.height + enums.window_spacing;
+        for(let child of window.children) {
+            move_window(meta_windows[child.index], false, x, _y, child.width, child.height);
+            _y += child.height + enums.window_spacing;
+        }
+        x += window.width + enums.window_spacing;
+    }
+}
 
 function sort_windows(windows, work_area, move_maximized_windows) {
     /* Window sorting algorithm
@@ -103,7 +194,7 @@ function sort_windows(windows, work_area, move_maximized_windows) {
         let window = windows[index];
         if((window.maximized_horizontally === true && window.maximized_vertically === true) && get_all_workspace_windows().length !== 1) {
             if(move_maximized_windows) // If we are wanting to deal with maximized windows, move them to a new workspace.
-                win_to_new_workspace(window);
+                win_to_new_workspace(window, false);
             continue; // Skip windows that are maximized otherwise. They will be dealt with by the size-changed listener.
         }
 
