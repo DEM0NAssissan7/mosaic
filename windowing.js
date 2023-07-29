@@ -82,7 +82,8 @@ function sort_workspace_windows(workspace, move_maximized_windows) {
                 i--;
             }
         }
-        z_sort(meta_windows, windows, work_area, move_maximized_windows);
+        let window_vectors = z_sort(windows, work_area); // Sort windows
+        draw_window_vectors(meta_windows, window_vectors, work_area); // Draw windows on screen
     }
 }
 
