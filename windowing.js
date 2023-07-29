@@ -148,6 +148,8 @@ function z_sort(windows, work_area) {
 }
 
 function draw_window_vectors(meta_windows, window_vectors, work_area) {
+    if(!window_vectors)
+        return;
     // Draw the windows on-screen
     let windows = window_vectors.windows;
     let space = window_vectors.space;
