@@ -1,6 +1,65 @@
 const extension = imports.misc.extensionUtils.getCurrentExtension();
-
 const enums = extension.imports.enums;
+
+/* Wingroup class
+    Every window has a wingroup.
+    Windows in a wingroup can only travel horizontally, and every window has a child wingroup.
+    The algorithm will run through them all recursively to determine the best place for a window.
+*/
+class Wingroup {
+    constructor(x, y, max_width, max_height) {
+        this.window = [];
+        this.x = x;
+        this.y = y;
+        this.width = 0;
+        this.height = 0;
+        this.max_width = max_width;
+        this.max_height = max_height;
+    }
+    get_optimal(window) {
+        let new_width = this.width + enums.window_spacing + window.width;
+        let minimum_area = Math.max(this.height, window.height) * new_width;
+        if(new_width > this.max_width) // If the window will exceed wingroup bounds, force it to go to a subgroup
+            minimum_area = Infinity;
+        let target_window = null;
+        for(let _window of this.windows) {
+            let area = _window.subgroup.get_optimal(window).area;
+            if(area && area < minimum_area) {
+                minimum_area = area;
+                target_window = _window;
+            }
+        }
+        return {
+            area: minimum_area,
+            window: target_window
+        }
+    }
+    add_window(window) {
+        let optimal = this.get_optimal(window);
+        if(optimal.area === Infinity) {
+            // If window cannot fit at all
+            return;
+        }
+        if(optimal.window === null) {
+            // Add window to the side
+            window.subgroup = new Wingroup(this.width + this.x, this.y + window.height, window.width, this.max_height - window.height);
+            this.windows.push(window);
+            this.width += window.width;
+            this.height = Math.max(this.height, window.height);
+            return;
+        }
+        optimal.window.subgroup.add_window(window);
+    }
+    draw_windows(meta_windows) {
+        let x = (this.max_width - this.width) / 2 + this.x;
+        let y = (this.max_height - this.height) / 2 + this.y;
+        for(let window of this.windows) {
+            move_window(meta_windows[window.index], false, x, y, window.width, window.height); // Draw initial window
+            window.subgroup.draw_windows();
+            x += window.width + enums.window_spacing;
+        }
+    }
+}
 
 function get_all_windows() {
     return global.display.list_all_windows();
