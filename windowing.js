@@ -84,7 +84,7 @@ function sort_workspace_windows(workspace, move_maximized_windows) {
         }
         windows.push(new window_descriptor(window, i));
     }
-    windows = windows.sort((a, b) => b.width - a.width);
+    windows = windows.sort((a, b) => b.width * b.height - a.width * a.height); // Sort windows by area
 
     let n_displays = global.display.get_n_monitors(); // Sort on all monitors
     for(let i = 0; i < n_displays; i++) {
