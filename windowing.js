@@ -70,7 +70,7 @@ function sort_workspace_windows(workspace, move_maximized_windows) {
         }
         windows.push(create_window_enum(window, i));
     }
-    windows = windows.sort((a, b) => a.width - b.width);
+    windows = windows.sort((a, b) => b.width - a.width);
 
     let n_displays = global.display.get_n_monitors(); // Sort on all monitors
     for(let i = 0; i < n_displays; i++) {
