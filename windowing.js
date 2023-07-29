@@ -87,7 +87,7 @@ function sort_workspace_windows(workspace, move_maximized_windows) {
     }
 }
 
-function z_sort(meta_windows, windows, work_area, move_maximized_windows) {
+function z_sort(windows, work_area) {
     if(windows.length === 0)
         return;
     let space = {
