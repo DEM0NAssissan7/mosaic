@@ -39,7 +39,9 @@ class Extension {
     }
 
     sort_window_workspace(_, window) {
-        windowing.sort_workspace_windows(window.get_workspace());
+        setTimeout(() => {
+            windowing.sort_workspace_windows(window.get_workspace());
+        }, 100);
     }
 
     sort_window_workspace_wm(_, win) {
