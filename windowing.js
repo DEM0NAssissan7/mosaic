@@ -141,15 +141,19 @@ function z_sort(windows, work_area) {
     }
 
     // TODO: Add multi-pass sorting code to get optimal shape for windows
-    horizontal_windows.width = space.width;
-    horizontal_windows.height = space.height;
-    return horizontal_windows; // Return the set of rectangle vectors and their children
+    return {
+        windows: horizontal_windows,
+        space: space
+    }; // Return the set of rectangle vectors and their children
 }
 
-function draw_window_vectors(meta_windows, windows, work_area) {
+function draw_window_vectors(meta_windows, window_vectors, space, work_area) {
     // Draw the windows on-screen
-    let x = (work_area.width - windows.width) / 2 + work_area.x;
-    let y = (work_area.height - windows.height) / 2 + work_area.y;
+    let windows = window_vectors.windows;
+    let space = window_vectors.space;
+
+    let x = (work_area.width - space.width) / 2 + work_area.x;
+    let y = (work_area.height - space.height) / 2 + work_area.y;
     for(let window of windows) {
         move_window(meta_windows[window.index], false, x, y, window.width, window.height);
         let _y = y + window.height + enums.window_spacing;
