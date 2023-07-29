@@ -147,7 +147,7 @@ function z_sort(windows, work_area) {
     }; // Return the set of rectangle vectors and their children
 }
 
-function draw_window_vectors(meta_windows, window_vectors, space, work_area) {
+function draw_window_vectors(meta_windows, window_vectors, work_area) {
     // Draw the windows on-screen
     let windows = window_vectors.windows;
     let space = window_vectors.space;
