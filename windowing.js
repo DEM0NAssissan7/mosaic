@@ -61,7 +61,14 @@ function sort_workspace_windows(workspace, move_maximized_windows) {
     // Put needed window info into an enum so it can be transferred between arrays
     let windows = [];
     for(let i = 0; i < meta_windows.length; i++) {
-        windows.push(create_window_enum(meta_windows[i], i));
+        let window = meta_windows[i];
+        // Check if the window is maximized, and move it over if it is
+        if((window.maximized_horizontally === true && window.maximized_vertically === true) && get_all_workspace_windows().length !== 1) {
+            if(move_maximized_windows) // If we are wanting to deal with maximized windows, move them to a new workspace.
+                win_to_new_workspace(window, false);
+            continue; // Skip windows that are maximized otherwise. They will be dealt with by the size-changed listener.
+        }
+        windows.push(create_window_enum(window, i));
     }
 
     let n_displays = global.display.get_n_monitors(); // Sort on all monitors
@@ -98,12 +105,6 @@ function z_sort(windows, work_area) {
     let horizontal_windows = [];
     // Now, sort the windows
     for(let window of windows) {
-        // Check if the window is maximized, and move it over if it is
-        if((window.maximized_horizontally === true && window.maximized_vertically === true) && get_all_workspace_windows().length !== 1) {
-            if(move_maximized_windows) // If we are wanting to deal with maximized windows, move them to a new workspace.
-                win_to_new_workspace(window, false);
-            continue; // Skip windows that are maximized otherwise. They will be dealt with by the size-changed listener.
-        }
         let placed_horizontal_area = (space.width + enums.window_spacing + window.width) * Math.max(window.height, space.height);
         let will_exceed_horizontally = space.width + enums.window_spacing + window.width > work_area.width;
         let parent_index = null;
