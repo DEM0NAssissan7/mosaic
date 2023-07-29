@@ -70,6 +70,7 @@ function sort_workspace_windows(workspace, move_maximized_windows) {
         }
         windows.push(create_window_enum(window, i));
     }
+    windows = windows.sort((a, b) => a.width - b.width);
 
     let n_displays = global.display.get_n_monitors(); // Sort on all monitors
     for(let i = 0; i < n_displays; i++) {
@@ -140,14 +141,15 @@ function z_sort(windows, work_area) {
     }
 
     // TODO: Add multi-pass sorting code to get optimal shape for windows
-
+    horizontal_windows.width = space.width;
+    horizontal_windows.height = space.height;
     return horizontal_windows; // Return the set of rectangle vectors and their children
 }
 
 function draw_window_vectors(meta_windows, windows, work_area) {
     // Draw the windows on-screen
-    let x = (work_area.width - space.width) / 2 + work_area.x;
-    let y = (work_area.height - space.height) / 2 + work_area.y;
+    let x = (work_area.width - windows.width) / 2 + work_area.x;
+    let y = (work_area.height - windows.height) / 2 + work_area.y;
     for(let window of windows) {
         move_window(meta_windows[window.index], false, x, y, window.width, window.height);
         let _y = y + window.height + enums.window_spacing;
