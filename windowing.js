@@ -40,18 +40,32 @@ function move_back_window(window) {
     return previous_workspace;
 }
 
-function create_window_enum(window, index) {
+function window_descriptor(window, index) {
     let frame = window.get_frame_rect();
-    return {
-        index: index,
-        children: [],
-        x: frame.x,
-        y: frame.y,
-        width: frame.width,
-        height: frame.height,
-        total_height: frame.height,
-        maximized_horizontally: window.maximized_horizontally,
-        maximized_vertically: window.maximized_vertically
+
+    this.index = index;
+    this.children = [];
+    this.x = frame.x;
+    this.y = frame.y;
+    this.width = frame.width;
+    this.height = frame.height;
+    this.total_height = frame.height;
+    this.total_width = frame.width;
+    this.maximized_horizontally = window.maximized_horizontally;
+    this.maximized_vertically = window.maximized_vertically;
+    this.vertical_children = true;
+}
+
+window_descriptor.prototype.check_available_space = function(space, window) {
+    if(this.vertical_children) {
+        // Children should be placed under window
+
+        if(window.width > this.width) // Check window can properly fit under
+            return false;
+        let new_height = this.total_height + enums.window_spacing + window.height;
+        return Math.max(new_height, space.height) * space.width; // Return the new space area
+    } else {
+        // Children should be placed to the right of the window
     }
 }
 
@@ -68,7 +82,7 @@ function sort_workspace_windows(workspace, move_maximized_windows) {
                 win_to_new_workspace(window, false);
             continue; // Skip windows that are maximized otherwise. They will be dealt with by the size-changed listener.
         }
-        windows.push(create_window_enum(window, i));
+        windows.push(new window_descriptor(window, i));
     }
     windows = windows.sort((a, b) => b.width - a.width);
 
@@ -106,22 +120,17 @@ function z_sort(windows, work_area) {
     let horizontal_windows = [];
     // Now, sort the windows
     for(let window of windows) {
-        let placed_horizontal_area = (space.width + enums.window_spacing + window.width) * Math.max(window.height, space.height);
-        let will_exceed_horizontally = space.width + enums.window_spacing + window.width > work_area.width;
         let parent_index = null;
+        let new_width = space.width + enums.window_spacing + window.width;
+        let minimum_area
+        if(new_width <= work_area.width) // If the window will fit when placed horizontally
+            minimum_area = (space.width + enums.window_spacing + window.width) * Math.max(window.height, space.height); // Set minimum area is the area if the window is placed horizontally
+        else // If not, default to putting it as a child
+            minimum_area = Infinity;
         for(let i = 0; i < horizontal_windows.length; i++) {
-            let _window = horizontal_windows[i];
-            if(window.width > _window.width) // Check window can properly fit under
-                continue;
-            // Check if space when window is placed to the right will be greater than being placed under
-            let new_height = _window.total_height + enums.window_spacing + window.height;
-            if(!will_exceed_horizontally) {
-                if(placed_horizontal_area > new_height * space.width && // See if it is more optimal to place window under
-                    new_height <= work_area.height // Make sure that it will fit in the bounds of the screen
-                ) {
-                    parent_index = i;
-                }
-            } else if (new_height <= work_area.height){
+            let available = horizontal_windows[i].check_available_space(space, window);
+            if(available && available < minimum_area) {// If the new area is smaller than what has been currently measured
+                minimum_area = available
                 parent_index = i;
             }
         }
