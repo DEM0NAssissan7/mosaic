@@ -175,8 +175,13 @@ function add_windows(tilegroup, windows, meta_windows, new_meta_window, keep_ove
 
 function windows_to_descriptors(meta_windows) {
     let descriptors = [];
-    for(let i = 0; i < meta_windows.length; i++)
-        descriptors.push(new window_descriptor(meta_windows[i], i));
+    for(let i = 0; i < meta_windows.length; i++) {
+        let meta_window = meta_windows[i];
+        // Exclusion clause: windows we do not want to tile
+        if( meta_window.is_hidden())
+            continue;
+        descriptors.push(new window_descriptor(meta_window, i));
+    }
     return descriptors
 }
 
