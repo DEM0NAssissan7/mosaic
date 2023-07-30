@@ -79,6 +79,7 @@ class Tilegroup {
         return width;
     }
     get_height(window) {
+        // Get total window height
         let height = window.height;
         let max_height = 0;
         for(let _window of window.subgroup.windows) {
