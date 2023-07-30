@@ -44,8 +44,8 @@ class Tilegroup {
             let area = subgroup.get_new_area(window);
             let optimal = subgroup.get_optimal(window).area; // Check if it is better to use the subgroup
             let _window = _window_;
-            if(optimal && optimal < area && optimal !== Infinity) {
-                area = optimal;
+            if(optimal.area < area && optimal.area !== Infinity) {
+                area = optimal.area;
                 _window = optimal.window;
             }
             if(area < minimum_area) {
