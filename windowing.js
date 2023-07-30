@@ -290,23 +290,3 @@ function sort_workspace_windows(workspace, move_maximized_windows) {
         root_wingroup.draw_windows(meta_windows, false, root_wingroup.get_center_offset(work_area.x, work_area.y).x);
     }
 }
-
-function draw_window_vectors(meta_windows, window_vectors, work_area) {
-    if(!window_vectors)
-        return;
-    // Draw the windows on-screen
-    let windows = window_vectors.windows;
-    let space = window_vectors.space;
-
-    let x = (work_area.width - space.width) / 2 + work_area.x;
-    let y = (work_area.height - space.height) / 2 + work_area.y;
-    for(let window of windows) {
-        move_window(meta_windows[window.index], false, x, y, window.width, window.height);
-        let _y = y + window.height + enums.window_spacing;
-        for(let child of window.children) {
-            move_window(meta_windows[child.index], false, x, _y, child.width, child.height);
-            _y += child.height + enums.window_spacing;
-        }
-        x += window.width + enums.window_spacing;
-    }
-}
