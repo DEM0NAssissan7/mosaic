@@ -180,7 +180,7 @@ function windows_to_descriptors(meta_windows) {
         // Exclusion clause: windows we do not want to tile
         if( meta_window.is_hidden() ||
             meta_window.is_attached_dialog() ||
-            meta_window.wm_class === null)
+            meta_window.window_type !== 0)
             continue;
         descriptors.push(new window_descriptor(meta_window, i));
     }
