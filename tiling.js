@@ -102,7 +102,6 @@ class Tilegroup {
             if(!offset)
                 _offset = (this.max_height / 2) - (this.get_height(window) / 2);
             // Use this code to prevent redundant window movements
-            // This mitigates infinite recursion with size-changed listener
             let _x = Math.round(this.x + x + x_offset);
             let _y = Math.round(this.y + _offset);
             let _width = window.width;
@@ -160,7 +159,7 @@ function add_windows(tilegroup, windows, meta_windows, new_meta_window, keep_ove
                 add_windows(tilegroup, new_windows, meta_windows, false, keep_oversized_windows);
                 if(!keep_oversized_windows) {
                     let workspace = windowing.win_to_new_workspace(new_meta_window, false);
-                    tile_workspace_windows(workspace, new_meta_window); // Tile new workspace for window
+                    tile_workspace_windows(workspace, new_meta_window, false, true); // Tile new workspace for window
                     workspace.activate(0);
                 }
             } else {
