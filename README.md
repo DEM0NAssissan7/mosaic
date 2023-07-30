@@ -14,3 +14,8 @@ Next-generation window management
 
 # Needs work:
 - Window tiling algorithm (major)
+
+# Needs review:
+- Event listeners
+- Window tiling algorithm
+- APIs
