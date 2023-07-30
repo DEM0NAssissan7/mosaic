@@ -97,7 +97,7 @@ class Extension {
                     clearTimeout(event_timeout);
                     event_timeout = setTimeout(() => {
                         tiling.tile_workspace_windows(workspace, window);
-                    }, 100);
+                    }, 1000);
                     size_changed = false;
                 }
         }));
