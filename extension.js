@@ -40,7 +40,10 @@ class Extension {
         let n_workspaces = workspace_manager.get_n_workspaces();
         for(let i = 0; i < n_workspaces; i++) {
             let workspace = workspace_manager.get_workspace_by_index(i);
-            tiling.tile_workspace_windows(workspace, false);
+            // Recurse all monitors
+            let n_monitors = global.display.get_n_monitors();
+            for(let j = 0; j < n_monitors; j++)
+                tiling.tile_workspace_windows(workspace, false, j);
         }
     }
 
@@ -77,7 +80,7 @@ class Extension {
                         window.
                     */
                     maximized_windows[id] = new_workspace.index(); // Mark window as maximized
-                    tiling.tile_workspace_windows(workspace, false); // Sort the workspace where the came from
+                    tiling.tile_workspace_windows(workspace, false, window.get_monitor()); // Sort the workspace where the window came from
                     size_changed = false;
                     return;
                 } else if(

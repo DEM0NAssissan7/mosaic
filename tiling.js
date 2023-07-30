@@ -160,14 +160,18 @@ function windows_to_descriptors(meta_windows) {
     return descriptors
 }
 
-function tile_workspace_windows(workspace, reference_meta_window) {
+function tile_workspace_windows(workspace, reference_meta_window, monitor) {
     let meta_windows = workspace.list_windows();
 
     // Put needed window info into an enum so it can be transferred between arrays
     // Also sort by widest to thinnest
     let windows = windows_to_descriptors(meta_windows).sort((a, b) => b.width - a.width);
 
-    let current_monitor = reference_meta_window.get_monitor();
+    let current_monitor;
+    if(reference_meta_window)
+        current_monitor = reference_meta_window.get_monitor();
+    else
+        current_monitor = monitor;
     let work_area = workspace.get_work_area_for_monitor(current_monitor); // Get working area for current space
 
     const top_bar_height = global.display.get_monitor_geometry(current_monitor).height - work_area.height;
