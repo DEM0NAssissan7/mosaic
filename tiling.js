@@ -179,5 +179,5 @@ function tile_workspace_windows(workspace, reference_meta_window) {
         top_bar_height,
         0);
     add_windows(root_wingroup, windows, meta_windows, reference_meta_window);
-    root_wingroup.draw_windows(meta_windows, false, root_wingroup.get_center_offset(work_area));
+    root_wingroup.draw_windows(meta_windows, false, root_wingroup.get_center_x_offset(work_area));
 }
