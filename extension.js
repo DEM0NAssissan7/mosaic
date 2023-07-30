@@ -81,7 +81,8 @@ class Extension {
                 windowing.get_all_workspace_windows().length === 1// If the workspace anatomy has not changed
                 ) {
                     maximized_windows[id] = false;
-                    windowing.move_back_window(window); // Move the window back to its workspace
+                    let _workspace = windowing.move_back_window(window); // Move the window back to its workspace
+                    windowing.sort_workspace_windows(_workspace); // Sort the workspace
                 }
                 windowing.sort_workspace_windows(workspace_manager.get_active_workspace()); // Sort active workspace
                 enabled = false;
