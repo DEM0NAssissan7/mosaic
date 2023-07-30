@@ -6,7 +6,7 @@ const enums = extension.imports.enums;
     Windows in a wingroup can only travel horizontally, and every window has a child wingroup.
     The algorithm will run through them all recursively to determine the best place for a window.
 */
-class Wingroup {
+class Tilegroup {
     constructor(max_width, max_height, root, x, y, id) {
         this.windows = [];
         this.x = x;
@@ -81,7 +81,7 @@ class Wingroup {
         }
         if(optimal.window === null) {
             // Add window to the side
-            window.subgroup = new Wingroup(window.width, window.height, this.root, this.x + this.width + enums.window_spacing, this.y + window.height + enums.window_spacing, this.id);
+            window.subgroup = new Tilegroup(window.width, window.height, this.root, this.x + this.width + enums.window_spacing, this.y + window.height + enums.window_spacing, this.id);
             this.windows.push(window);
             this.width += window.width;
             this.height = Math.max(this.height, window.height);
@@ -278,7 +278,7 @@ function sort_workspace_windows(workspace, move_maximized_windows) {
             }
         }
         let top_bar_height = global.display.get_monitor_geometry(i).height - work_area.height;
-        let root_wingroup = new Wingroup(work_area.width, work_area.height, false, 0, top_bar_height, -1);
+        let root_wingroup = new Tilegroup(work_area.width, work_area.height, false, 0, top_bar_height, -1);
         root_wingroup.add_windows(windows, meta_windows, workspace.index() === get_workspace().index());
         root_wingroup.draw_windows(meta_windows, false, root_wingroup.get_center_offset(work_area.x, work_area.y).x);
     }
