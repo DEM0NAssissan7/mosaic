@@ -161,6 +161,8 @@ function windows_to_descriptors(meta_windows) {
 }
 
 function tile_workspace_windows(workspace, reference_meta_window, monitor) {
+    if(!workspace) // Failsafe for undefined workspace
+        return;
     let meta_windows = workspace.list_windows();
 
     // Put needed window info into an enum so it can be transferred between arrays
