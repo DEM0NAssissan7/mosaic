@@ -22,6 +22,7 @@ Next-generation window management
 - Event listeners
 - Window tiling algorithm
 - APIs
+- Meta Timestamps
 
 # Known bugs:
 - Infinite workspace recursion in certain conditions
