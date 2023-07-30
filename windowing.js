@@ -103,7 +103,6 @@ function window_descriptor(window, index) {
     let frame = window.get_frame_rect();
 
     this.index = index;
-    this.children = [];
     this.x = frame.x;
     this.y = frame.y;
     this.width = frame.width;
