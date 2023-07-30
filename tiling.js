@@ -115,7 +115,7 @@ class Tilegroup {
             let _offset = offset;
             if(!offset)
                 _offset = (this.max_height / 2) - (this.get_height(window) / 2);
-            move_window(meta_windows[window.index], false, Math.round(this.x + x + x_offset), Math.round(this.y + _offset), window.width, window.height); // Draw initial window
+            windowing.move_window(meta_windows[window.index], false, Math.round(this.x + x + x_offset), Math.round(this.y + _offset), window.width, window.height); // Draw initial window
             window.subgroup.draw_windows(meta_windows, _offset, x_offset);
             x += window.width + enums.window_spacing;
         }
