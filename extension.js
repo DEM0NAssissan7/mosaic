@@ -29,6 +29,7 @@ let maximized_windows = [];
 let workspace_manager = global.workspace_manager;
 
 function tile_window_workspace(meta_window) {
+    if(!meta_window) return;
     tiling.tile_workspace_windows(
                                     meta_window.get_workspace(), 
                                     meta_window, 
