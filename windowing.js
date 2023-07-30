@@ -126,6 +126,10 @@ class Tilegroup {
     }
 }
 
+function get_primary_display() {
+    return global.display.get_primary_monitor();
+}
+
 function get_workspace() {
     return global.workspace_manager.get_active_workspace();
 }
