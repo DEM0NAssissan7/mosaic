@@ -18,7 +18,6 @@
 
 /* exported init */
 const extension = imports.misc.extensionUtils.getCurrentExtension();
-const Workspace = imports.ui.workspace.Workspace;
 
 const windowing = extension.imports.windowing;
 
