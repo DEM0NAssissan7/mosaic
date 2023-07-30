@@ -198,19 +198,6 @@ function window_descriptor(window, index) {
     this.vertical_children = true;
 }
 
-window_descriptor.prototype.check_available_space = function(space, window) {
-    if(this.vertical_children) {
-        // Children should be placed under window
-
-        if(window.width > this.width) // Check window can properly fit under
-            return false;
-        let new_height = this.total_height + enums.window_spacing + window.height;
-        return Math.max(new_height, space.height) * space.width; // Return the new space area
-    } else {
-        // Children should be placed to the right of the window
-    }
-}
-
 function sort_workspace_windows(workspace, move_maximized_windows) {
     let meta_windows = workspace.list_windows();
 
