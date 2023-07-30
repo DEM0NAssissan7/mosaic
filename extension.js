@@ -77,7 +77,8 @@ class Extension {
                 } else if(
                 (window.maximized_horizontally === false ||
                 window.maximized_vertically === false) && // If window is not maximized
-                maximized_windows[id] === workspace.index() // If the workspace anatomy has not changed
+                maximized_windows[id] === workspace.index() &&
+                windowing.get_all_workspace_windows().length === 1// If the workspace anatomy has not changed
                 ) {
                     maximized_windows[id] = false;
                     windowing.move_back_window(window); // Move the window back to its workspace
