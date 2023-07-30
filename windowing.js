@@ -132,7 +132,7 @@ function sort_workspace_windows(workspace, move_maximized_windows) {
     let meta_windows = workspace.list_windows();
 
     // Put needed window info into an enum so it can be transferred between arrays
-    let windows = [];
+    let window_descriptors = [];
     for(let i = 0; i < meta_windows.length; i++) {
         let window = meta_windows[i];
         // Check if the window is maximized, and move it over if it is
@@ -141,9 +141,47 @@ function sort_workspace_windows(workspace, move_maximized_windows) {
                 win_to_new_workspace(window, false);
             continue; // Skip windows that are maximized otherwise. They will be dealt with by the size-changed listener.
         }
-        windows.push(new window_descriptor(window, i));
+        window_descriptors.push(new window_descriptor(window, i));
     }
-    windows = windows.sort((a, b) => b.width * b.height - a.width * a.height); // Sort windows by area
+    // Advanced sorter
+    let windows = [];
+    const advanced_sorter = false;
+    if(advanced_sorter) {
+        let vertical = false;
+        while(window_descriptors.length > 0) {
+            let window;
+            let index;
+            if(vertical) {
+                // Get tallest unused window
+                let max = 0;
+                for(let i = 0; i < window_descriptors.length; i++) {
+                    let _window = window_descriptors[i];
+                    if(_window.height > max) {
+                        max = _window.height;
+                        index = i;
+                        window = _window;
+                    }
+                }
+                vertical = false;
+            } else {
+                // Get longest unused window
+                let max = 0;
+                for(let i = 0; i < window_descriptors.length; i++) {
+                    let _window = window_descriptors[i];
+                    if(_window.width > max) {
+                        max = _window.width;
+                        index = i;
+                        window = _window;
+                    }
+                }
+                vertical = true;
+            }
+            windows.push(window);
+            window_descriptors.splice(index, 1);
+        }
+    } else {
+        windows = window_descriptors.sort((a, b) => b.width - a.width);
+    }
 
     let n_displays = global.display.get_n_monitors(); // Sort on all monitors
     for(let i = 0; i < n_displays; i++) {
