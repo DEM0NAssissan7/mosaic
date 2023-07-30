@@ -70,42 +70,44 @@ class Extension {
         wm_eventids.push(global.window_manager.connect(
             'size-changed', // When size is changed
             (_, win) => {
-                // Deal with maximizing to a new workspace and vice versa
-                let window = win.meta_window;
-                let id = window.get_id();
-                let workspace = window.get_workspace();
-                size_changed = true;
-                
-                if(window.maximized_horizontally === true && window.maximized_vertically === true && windowing.get_all_workspace_windows().length !== 1) {
-                    // If maximized (and not alone), move to new workspace and activate it if it is on the active workspace
-                    let new_workspace = windowing.win_to_new_workspace(window, workspace.index() === window.get_workspace().index());
-                    /* We mark the window as activated by using its id to index an array
-                        We put the value as the active workspace index so that if the workspace anatomy
-                        of the current workspace changes, it does not move the maximized window to an unrelated
-                        window.
-                    */
-                    maximized_windows[id] = new_workspace.index(); // Mark window as maximized
-                    tiling.tile_workspace_windows(workspace, false, window.get_monitor(), false); // Sort the workspace where the window came from
-                    size_changed = false;
-                    return;
-                } else if(
-                (window.maximized_horizontally === false ||
-                window.maximized_vertically === false) && // If window is not maximized
-                maximized_windows[id] === workspace.index() &&
-                windowing.get_all_workspace_windows().length === 1// If the workspace anatomy has not changed
-                ) {
-                    maximized_windows[id] = false;
-                    windowing.move_back_window(window); // Move the window back to its workspace
-                    tile_window_workspace(window);
-                }
-                if(size_changed) {
-                    clearTimeout(event_timeout);
-                    tile_window_workspace(window);
-                    tiling.tile_workspace_windows(window.get_workspace(), window, null, true);
-                    event_timeout = setTimeout(() => {
+                if(!size_changed) {
+                    // Deal with maximizing to a new workspace and vice versa
+                    let window = win.meta_window;
+                    let id = window.get_id();
+                    let workspace = window.get_workspace();
+                    size_changed = true;
+                    
+                    if(window.maximized_horizontally === true && window.maximized_vertically === true && windowing.get_all_workspace_windows().length !== 1) {
+                        // If maximized (and not alone), move to new workspace and activate it if it is on the active workspace
+                        let new_workspace = windowing.win_to_new_workspace(window, workspace.index() === window.get_workspace().index());
+                        /* We mark the window as activated by using its id to index an array
+                            We put the value as the active workspace index so that if the workspace anatomy
+                            of the current workspace changes, it does not move the maximized window to an unrelated
+                            window.
+                        */
+                        maximized_windows[id] = new_workspace.index(); // Mark window as maximized
+                        tiling.tile_workspace_windows(workspace, false, window.get_monitor(), false); // Sort the workspace where the window came from
+                        size_changed = false;
+                        return;
+                    } else if(
+                    (window.maximized_horizontally === false ||
+                    window.maximized_vertically === false) && // If window is not maximized
+                    maximized_windows[id] === workspace.index() &&
+                    windowing.get_all_workspace_windows().length === 1// If the workspace anatomy has not changed
+                    ) {
+                        maximized_windows[id] = false;
+                        windowing.move_back_window(window); // Move the window back to its workspace
                         tile_window_workspace(window);
-                    }, 1000);
-                    size_changed = false;
+                    }
+                    if(size_changed) {
+                        tile_window_workspace(window);
+                        tiling.tile_workspace_windows(window.get_workspace(), window, null, true);
+                        clearTimeout(event_timeout);
+                        event_timeout = setTimeout(() => {
+                            tile_window_workspace(window); // Fully sort workspace after a time
+                        }, 1000);
+                        size_changed = false;
+                    }
                 }
         }));
 
