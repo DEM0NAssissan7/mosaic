@@ -62,7 +62,13 @@ class Tilegroup {
         }
         if(optimal.window === null) {
             // Add window to the side
-            window.subgroup = new Tilegroup(window.width, window.height, this.root, this.x + this.width + enums.window_spacing, this.y + window.height + enums.window_spacing, this.id);
+            window.subgroup = new Tilegroup(
+                window.width,
+                window.height,
+                this.root,
+                this.x + this.width + enums.window_spacing,
+                this.y + window.height + enums.window_spacing,
+                this.id + 1);
             this.windows.push(window);
             this.width += window.width;
             this.height = Math.max(this.height, window.height);
