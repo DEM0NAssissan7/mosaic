@@ -184,7 +184,7 @@ function windows_to_descriptors(meta_windows) {
             continue;
         descriptors.push(new window_descriptor(meta_window, i));
     }
-    return descriptors
+    return descriptors;
 }
 
 function tile_workspace_windows(workspace, reference_meta_window, monitor, keep_oversized_windows) {
