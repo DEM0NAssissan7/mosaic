@@ -27,12 +27,13 @@ let display_eventids = [];
 let maximized_windows = [];
 
 let workspace_manager = global.workspace_manager;
+
+function tile_window_workspace(meta_window) {
+    tiling.tile_workspace_windows(meta_window.get_workspace(), meta_window);
+}
+
 class Extension {
     constructor() {
-    }
-
-    tile_window_workspace(meta_window) {
-        tiling.tile_workspace_windows(meta_window.get_workspace(), meta_window);
     }
 
     tile_all_workspaces() {
@@ -45,12 +46,12 @@ class Extension {
 
     sort_window_workspace(_, window) {
         setTimeout(() => {
-            this.tile_window_workspace(window);
+            tile_window_workspace(window);
         }, 100);
     }
 
     sort_window_workspace_wm(_, win) {
-        this.tile_window_workspace(win.meta_window);
+        tile_window_workspace(win.meta_window);
     }
 
     enable() {
@@ -87,7 +88,7 @@ class Extension {
                 ) {
                     maximized_windows[id] = false;
                     windowing.move_back_window(window); // Move the window back to its workspace
-                    this.tile_window_workspace(window);
+                    tile_window_workspace(window);
                 }
                 if(size_changed) {
                     clearTimeout(event_timeout);
