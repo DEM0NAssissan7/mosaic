@@ -126,7 +126,7 @@ function window_descriptor(meta_window, index) {
     this.vertical_children = true;
 }
 
-function add_windows(tilegroup, windows, meta_windows, new_meta_window) {
+function add_windows(tilegroup, windows, meta_windows, new_meta_window, keep_oversized_windows) {
     for(let window of windows) {
         let status = tilegroup.add_window(window);
         if(status === null && windowing.get_all_workspace_windows().length > 1) {
@@ -134,7 +134,6 @@ function add_windows(tilegroup, windows, meta_windows, new_meta_window) {
                 /* For windows that cannot fit, we move the new window (if applicable) to a new workspace
                     and focus it.
                 */
-                let workspace = windowing.win_to_new_workspace(new_meta_window, false);
                 let new_windows = windows;
                 for(let i = 0; i < new_windows.length; i++) {
                     if(meta_windows[new_windows[i].index].get_id() === new_meta_window.get_id()) {
@@ -144,9 +143,12 @@ function add_windows(tilegroup, windows, meta_windows, new_meta_window) {
                 }
                 new_windows.sort((a, b) => b.width - a.width);
                 tilegroup.windows = [];
-                add_windows(tilegroup, new_windows, meta_windows, false);
-                tile_workspace_windows(workspace, new_meta_window); // Tile new workspace for window
-                workspace.activate(0);
+                add_windows(tilegroup, new_windows, meta_windows, false, keep_oversized_windows);
+                if(!keep_oversized_windows) {
+                    let workspace = windowing.win_to_new_workspace(new_meta_window, false);
+                    tile_workspace_windows(workspace, new_meta_window); // Tile new workspace for window
+                    workspace.activate(0);
+                }
             } else {
                 // TODO: Define behavior for windows that are resized but cannot fit
             }
@@ -161,7 +163,7 @@ function windows_to_descriptors(meta_windows) {
     return descriptors
 }
 
-function tile_workspace_windows(workspace, reference_meta_window, monitor) {
+function tile_workspace_windows(workspace, reference_meta_window, monitor, keep_oversized_windows) {
     if(!workspace) // Failsafe for undefined workspace
         return;
     let meta_windows = workspace.list_windows();
@@ -185,6 +187,6 @@ function tile_workspace_windows(workspace, reference_meta_window, monitor) {
         0,
         top_bar_height,
         0);
-    add_windows(root_wingroup, windows, meta_windows, reference_meta_window);
+    add_windows(root_wingroup, windows, meta_windows, reference_meta_window, keep_oversized_windows);
     root_wingroup.draw_windows(meta_windows, false, root_wingroup.get_center_x_offset(work_area));
 }

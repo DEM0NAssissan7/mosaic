@@ -29,7 +29,11 @@ let maximized_windows = [];
 let workspace_manager = global.workspace_manager;
 
 function tile_window_workspace(meta_window) {
-    tiling.tile_workspace_windows(meta_window.get_workspace(), meta_window);
+    tiling.tile_workspace_windows(
+                                    meta_window.get_workspace(), 
+                                    meta_window, 
+                                    null, 
+                                    false);
 }
 
 class Extension {
@@ -43,7 +47,7 @@ class Extension {
             // Recurse all monitors
             let n_monitors = global.display.get_n_monitors();
             for(let j = 0; j < n_monitors; j++)
-                tiling.tile_workspace_windows(workspace, false, j);
+                tiling.tile_workspace_windows(workspace, false, j, false);
         }
     }
 
@@ -80,7 +84,7 @@ class Extension {
                         window.
                     */
                     maximized_windows[id] = new_workspace.index(); // Mark window as maximized
-                    tiling.tile_workspace_windows(workspace, false, window.get_monitor()); // Sort the workspace where the window came from
+                    tiling.tile_workspace_windows(workspace, false, window.get_monitor(), false); // Sort the workspace where the window came from
                     size_changed = false;
                     return;
                 } else if(
@@ -95,6 +99,8 @@ class Extension {
                 }
                 if(size_changed) {
                     clearTimeout(event_timeout);
+                    tile_window_workspace(window);
+                    tiling.tile_workspace_windows(window.get_workspace(), window, null, true);
                     event_timeout = setTimeout(() => {
                         tile_window_workspace(window);
                     }, 1000);
