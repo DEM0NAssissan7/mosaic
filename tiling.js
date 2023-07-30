@@ -179,7 +179,8 @@ function windows_to_descriptors(meta_windows) {
         let meta_window = meta_windows[i];
         // Exclusion clause: windows we do not want to tile
         if( meta_window.is_hidden() ||
-            meta_window.is_attached_dialog())
+            meta_window.is_attached_dialog() ||
+            meta_window.wm_class === null)
             continue;
         descriptors.push(new window_descriptor(meta_window, i));
     }
