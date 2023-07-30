@@ -52,15 +52,16 @@ class Extension {
     enable() {
         console.log("Starting Mosaic layout manager.");
         
-        let enabled = false; // This prevents recursion
+        let size_changed = false;
+        let event_timeout;
         wm_eventids.push(global.window_manager.connect(
             'size-changed', // When size is changed
             (_, win) => {
-            if(!enabled) {
-                enabled = true;
+                // Deal with maximizing to a new workspace and vice versa
                 let window = win.meta_window;
                 let id = window.get_id();
                 let workspace = workspace_manager.get_active_workspace();
+                size_changed = true;
                 
                 if(window.maximized_horizontally === true && window.maximized_vertically === true && windowing.get_all_workspace_windows().length !== 1) {
                     // If maximized (and not alone), move to new workspace and activate it if it is on the active workspace
@@ -72,7 +73,7 @@ class Extension {
                     */
                     maximized_windows[id] = new_workspace.index(); // Mark window as maximized
                     windowing.sort_workspace_windows(workspace); // Sort the workspace where the came from
-                    enabled = false;
+                    size_changed = false;
                     return;
                 } else if(
                 (window.maximized_horizontally === false ||
@@ -84,9 +85,13 @@ class Extension {
                     let _workspace = windowing.move_back_window(window); // Move the window back to its workspace
                     windowing.sort_workspace_windows(_workspace); // Sort the workspace
                 }
-                windowing.sort_workspace_windows(workspace_manager.get_active_workspace()); // Sort active workspace
-                enabled = false;
-            }
+                if(size_changed) {
+                    clearTimeout(event_timeout);
+                    event_timeout = setTimeout(() => {
+                        windowing.sort_workspace_windows(global.workspace_manager.get_active_workspace()); // Sort active workspace
+                    }, 100);
+                    size_changed = false;
+                }
         }));
 
         display_eventids.push(global.display.connect('window-created', this.sort_window_workspace));
