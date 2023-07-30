@@ -70,7 +70,7 @@ class Tilegroup {
                 window.width,
                 this.max_height - window.height,
                 this.root,
-                this.x + this.width + enums.window_spacing,
+                this.x + this.width,
                 this.y + window.height + enums.window_spacing,
                 this.id + 1);
             this.windows.push(window);
