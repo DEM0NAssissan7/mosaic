@@ -1,5 +1,4 @@
 const extension = imports.misc.extensionUtils.getCurrentExtension();
-const enums = extension.imports.enums;
 
 function get_primary_display() {
     return global.display.get_primary_monitor();
