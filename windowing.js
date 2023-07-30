@@ -59,6 +59,8 @@ class Wingroup {
             x += window.width + enums.window_spacing;
         }
     }
+function get_workspace() {
+    return global.workspace_manager.get_active_workspace();
 }
 
 function get_all_windows() {
