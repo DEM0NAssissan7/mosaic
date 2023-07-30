@@ -1,7 +1,7 @@
 {
   "name": "Mosaic",
   "description": "Next-generation window management",
-  "uuid": "mosaic@gnome.org",
+  "uuid": "mosaic@mawitime",
   "shell-version": [
     "44"
   ]
