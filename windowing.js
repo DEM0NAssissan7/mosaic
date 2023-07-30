@@ -67,6 +67,14 @@ function get_all_windows() {
     return global.display.list_all_windows();
 }
 
+function get_focused_window() {
+    let windows = get_all_windows();
+    for(let window of windows) {
+        if(window.has_focus())
+            return window;
+    }
+}
+
 function get_all_workspace_windows() {
     return global.workspace_manager.get_active_workspace().list_windows();
 }
