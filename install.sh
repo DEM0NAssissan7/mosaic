@@ -1,5 +1,4 @@
-./export-zip.sh
 uuid="mosaic@mawitime"
-extensions_dir="~/.local/share/gnome-shell/extensions"
-rm -rf "$extensions_dir/$uuid"
+./export-zip.sh # Export to zip
+gnome-extensions install "$uuid.zip" # Install using gnome-extensions
 rm "$uuid.zip"
