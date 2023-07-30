@@ -20,6 +20,7 @@
 const extension = imports.misc.extensionUtils.getCurrentExtension();
 
 const windowing = extension.imports.windowing;
+const tiling = extension.imports.windowing;
 
 let wm_eventids = [];
 let display_eventids = [];
