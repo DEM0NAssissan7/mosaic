@@ -33,9 +33,19 @@ function configure_window(window) {
 }
 
 function win_to_new_workspace(window, switch_to_new) {
-    let workspace = global.workspace_manager.append_new_workspace(false, 0); // Create new workspace
-    let active_workspace = get_workspace();
-    global.workspace_manager.reorder_workspace(workspace, active_workspace.index() + 1) // Move the new workspace to the right of the current workspace
+    let window_workspace = window.get_workspace();
+    let adjacent_workspace = window_workspace.get_neighbor(-4); // Get workspace to the right
+    let workspace;
+    // This is to prevent an infinite workspace creation bug
+    if(!adjacent_workspace) {
+        console.warn("Could not get right neighbor for workspace " + window_workspace.index());
+        workspace = global.workspace_manager.append_new_workspace(false, 0);
+    } else if(adjacent_workspace.list_windows().length > 0)
+        workspace = global.workspace_manager.append_new_workspace(false, 0);
+    else
+        workspace = adjacent_workspace;
+    
+    global.workspace_manager.reorder_workspace(workspace, window_workspace.index() + 1) // Move the new workspace to the right of the current workspace
     window.change_workspace(workspace); // Move window to new workspace
     let offset = global.display.get_monitor_geometry(window.get_monitor()); // Get top bar offset (if applicable)
     let frame = window.get_frame_rect();
