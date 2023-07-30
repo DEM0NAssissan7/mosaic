@@ -76,7 +76,7 @@ function get_focused_window() {
 }
 
 function get_all_workspace_windows() {
-    return global.workspace_manager.get_active_workspace().list_windows();
+    return get_workspace().list_windows();
 }
 
 function move_window(window, ignore_top_bar, x, y, w, h) {
