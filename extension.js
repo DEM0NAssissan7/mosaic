@@ -31,22 +31,26 @@ class Extension {
     constructor() {
     }
 
-    sort_all_workspaces() {
+    tile_window_workspace(meta_window) {
+        tiling.tile_workspace_windows(meta_window.get_workspace(), meta_window);
+    }
+
+    tile_all_workspaces() {
         let n_workspaces = workspace_manager.get_n_workspaces();
         for(let i = 0; i < n_workspaces; i++) {
             let workspace = workspace_manager.get_workspace_by_index(i);
-            windowing.sort_workspace_windows(workspace, true);
+            tiling.tile_workspace_windows(workspace, false);
         }
     }
 
     sort_window_workspace(_, window) {
         setTimeout(() => {
-            windowing.sort_workspace_windows(window.get_workspace());
+            this.tile_window_workspace(window);
         }, 100);
     }
 
     sort_window_workspace_wm(_, win) {
-        windowing.sort_workspace_windows(win.meta_window.get_workspace());
+        this.tile_window_workspace(win.meta_window);
     }
 
     enable() {
@@ -60,7 +64,7 @@ class Extension {
                 // Deal with maximizing to a new workspace and vice versa
                 let window = win.meta_window;
                 let id = window.get_id();
-                let workspace = workspace_manager.get_active_workspace();
+                let workspace = window.get_workspace();
                 size_changed = true;
                 
                 if(window.maximized_horizontally === true && window.maximized_vertically === true && windowing.get_all_workspace_windows().length !== 1) {
@@ -72,7 +76,7 @@ class Extension {
                         window.
                     */
                     maximized_windows[id] = new_workspace.index(); // Mark window as maximized
-                    windowing.sort_workspace_windows(workspace); // Sort the workspace where the came from
+                    tiling.tile_workspace_windows(workspace, false); // Sort the workspace where the came from
                     size_changed = false;
                     return;
                 } else if(
@@ -82,13 +86,13 @@ class Extension {
                 windowing.get_all_workspace_windows().length === 1// If the workspace anatomy has not changed
                 ) {
                     maximized_windows[id] = false;
-                    let _workspace = windowing.move_back_window(window); // Move the window back to its workspace
-                    windowing.sort_workspace_windows(_workspace); // Sort the workspace
+                    windowing.move_back_window(window); // Move the window back to its workspace
+                    this.tile_window_workspace(window);
                 }
                 if(size_changed) {
                     clearTimeout(event_timeout);
                     event_timeout = setTimeout(() => {
-                        windowing.sort_workspace_windows(global.workspace_manager.get_active_workspace()); // Sort active workspace
+                        tiling.tile_workspace_windows(workspace, window);
                     }, 100);
                     size_changed = false;
                 }
@@ -98,7 +102,7 @@ class Extension {
         wm_eventids.push(global.window_manager.connect('destroy', this.sort_window_workspace_wm));
 
         // Sort all workspaces at startup
-        this.sort_all_workspaces();
+        this.tile_all_workspaces();
     }
 
     disable() {
