@@ -291,53 +291,6 @@ function sort_workspace_windows(workspace, move_maximized_windows) {
     }
 }
 
-function z_sort(windows, work_area) {
-    if(windows.length === 0)
-        return;
-    let space = {
-        width: 0,
-        height: 0
-    };
-
-    let horizontal_windows = [];
-    // Now, sort the windows
-    for(let window of windows) {
-        let parent_index = null;
-        let new_width = space.width + enums.window_spacing + window.width;
-        let minimum_area
-        if(new_width <= work_area.width) // If the window will fit when placed horizontally
-            minimum_area = (space.width + enums.window_spacing + window.width) * Math.max(window.height, space.height); // Set minimum area is the area if the window is placed horizontally
-        else // If not, default to putting it as a child
-            minimum_area = Infinity;
-        for(let i = 0; i < horizontal_windows.length; i++) {
-            let available = horizontal_windows[i].check_available_space(space, window);
-            if(available && available < minimum_area) {// If the new area is smaller than what has been currently measured
-                minimum_area = available
-                parent_index = i;
-            }
-        }
-        if(parent_index === null){
-            if(space.width + enums.window_spacing + window.width > work_area.width) { // If the window cannot fit, send it to a new workspace and switch
-                continue; // Undefined behavior (for now)
-            }
-            horizontal_windows.push(window);
-            space.width += window.width + enums.window_spacing;
-            space.height = Math.max(space.height, window.height);
-        } else if(parent_index >= 0) {
-            let parent = horizontal_windows[parent_index];
-            parent.children.push(window);
-            parent.total_height += window.height + enums.window_spacing;
-            space.height = Math.max(space.height, parent.total_height);
-        }
-    }
-
-    // TODO: Add multi-pass sorting code to get optimal shape for windows
-    return {
-        windows: horizontal_windows,
-        space: space
-    }; // Return the set of rectangle vectors and their children
-}
-
 function draw_window_vectors(meta_windows, window_vectors, work_area) {
     if(!window_vectors)
         return;
