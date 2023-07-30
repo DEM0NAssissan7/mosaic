@@ -96,7 +96,7 @@ class Extension {
                 if(size_changed) {
                     clearTimeout(event_timeout);
                     event_timeout = setTimeout(() => {
-                        tiling.tile_workspace_windows(workspace, window);
+                        tile_window_workspace(window);
                     }, 1000);
                     size_changed = false;
                 }
