@@ -36,14 +36,17 @@ class Tilegroup {
         if(!this.check_fit(window)) // If the window will exceed tilegroup bounds, force it to go to a subgroup
             minimum_area = Infinity;
         let target_window = null;
-        for(let _window of this.windows) {
-            if(!_window.subgroup.check_fit(window))
+            let subgroup = _window_.subgroup;
+            if(!subgroup.check_fit(window))
                 continue;
             // See if placing the window under is better
-            let area = _window.subgroup.get_new_area(window);
-            let optimal = _window.subgroup.get_optimal(window).area; // Check if it is better to use the subgroup
-            if(optimal && optimal < area && optimal !== Infinity)
+            let area = subgroup.get_new_area(window);
+            let optimal = subgroup.get_optimal(window).area; // Check if it is better to use the subgroup
+            let _window = _window_;
+            if(optimal && optimal < area && optimal !== Infinity) {
                 area = optimal;
+                _window = optimal.window;
+            }
             if(area < minimum_area) {
                 minimum_area = area;
                 target_window = _window;
