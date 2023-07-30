@@ -23,5 +23,8 @@ Next-generation window management
 - Window tiling algorithm
 - APIs
 
+# Known bugs:
+- Infinite workspace recursion in certain conditions
+
 # Notes:
 - There is something wrong with Tilegroup.get_optimal()
