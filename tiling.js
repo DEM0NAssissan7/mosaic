@@ -101,7 +101,7 @@ class Tilegroup {
             let _offset = offset;
             if(!offset)
                 _offset = (this.max_height / 2) - (this.get_height(window) / 2);
-            // Use this code to prevent redundant window movements
+            // Prevent redundant window movements
             let _x = Math.round(this.x + x + x_offset);
             let _y = Math.round(this.y + _offset);
             let _width = window.width;
