@@ -127,3 +127,18 @@ class Tilegroup {
         }
     }
 }
+
+function window_descriptor(window, index) {
+    let frame = window.get_frame_rect();
+
+    this.index = index;
+    this.x = frame.x;
+    this.y = frame.y;
+    this.width = frame.width;
+    this.height = frame.height;
+    this.total_height = frame.height;
+    this.total_width = frame.width;
+    this.maximized_horizontally = window.maximized_horizontally;
+    this.maximized_vertically = window.maximized_vertically;
+    this.vertical_children = true;
+}
