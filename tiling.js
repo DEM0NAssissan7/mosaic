@@ -54,27 +54,6 @@ class Tilegroup {
             window: target_window
         }
     }
-    add_windows(windows, meta_windows, move_windows) {
-        for(let window of windows) {
-            let status = this.add_window(window);
-            if(status === null && get_all_workspace_windows().length > 1 && move_windows) {
-                // TODO: Define behavior for windows that cannot fit
-                let focus_window = get_focused_window()
-                let workspace = win_to_new_workspace(focus_window, false);
-                let new_windows = windows;
-                for(let i = 0; i < new_windows.length; i++) {
-                    if(meta_windows[new_windows[i].index].get_id() === focus_window.get_id()) {
-                        new_windows.splice(i, 1);
-                        break;
-                    }
-                }
-                new_windows.sort((a, b) => b.width - a.width);
-                this.windows = [];
-                this.add_windows(new_windows, meta_windows, false);
-                workspace.activate(0);
-            }
-        }
-    }
     add_window(window) {
         let optimal = this.get_optimal(window);
         if(optimal.area === Infinity) {
@@ -141,6 +120,33 @@ function window_descriptor(window, index) {
     this.maximized_horizontally = window.maximized_horizontally;
     this.maximized_vertically = window.maximized_vertically;
     this.vertical_children = true;
+}
+
+function add_windows(tilegroup, windows, meta_windows, new_window) {
+    for(let window of windows) {
+        let status = tilegroup.add_window(window);
+        if(status === null && get_all_workspace_windows().length > 1) {
+            if(new_window) {
+                /* For windows that cannot fit, we move the new window (if applicable) to a new workspace
+                    and focus it.
+                */
+                let workspace = windowing.win_to_new_workspace(new_window, false);
+                let new_windows = windows;
+                for(let i = 0; i < new_windows.length; i++) {
+                    if(meta_windows[new_windows[i].index].get_id() === new_window.get_id()) {
+                        new_windows.splice(i, 1);
+                        break;
+                    }
+                }
+                new_windows.sort((a, b) => b.width - a.width);
+                tilegroup.windows = [];
+                add_windows(tilegroup, new_windows, meta_windows, false);
+                workspace.activate(0);
+            } else {
+                // TODO: Define behavior for windows that are resized but cannot fit
+            }
+        }
+    }
 }
 
 function sort_workspace_windows(workspace, move_maximized_windows) {
