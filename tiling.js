@@ -129,7 +129,7 @@ function window_descriptor(meta_window, index) {
 function add_windows(tilegroup, windows, meta_windows, new_meta_window) {
     for(let window of windows) {
         let status = tilegroup.add_window(window);
-        if(status === null && get_all_workspace_windows().length > 1) {
+        if(status === null && windowing.get_all_workspace_windows().length > 1) {
             if(new_meta_window) {
                 /* For windows that cannot fit, we move the new window (if applicable) to a new workspace
                     and focus it.
