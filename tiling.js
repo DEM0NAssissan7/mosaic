@@ -177,7 +177,7 @@ function tile_workspace_windows(workspace, reference_meta_window, monitor) {
     const top_bar_height = global.display.get_monitor_geometry(current_monitor).height - work_area.height;
     let root_wingroup = new Tilegroup(
         work_area.width,
-        work_area.height - top_bar_height,
+        work_area.height,
         false,
         0,
         top_bar_height,
