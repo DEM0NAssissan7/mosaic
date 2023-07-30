@@ -145,7 +145,7 @@ function add_windows(tilegroup, windows, meta_windows, new_meta_window) {
                 new_windows.sort((a, b) => b.width - a.width);
                 tilegroup.windows = [];
                 add_windows(tilegroup, new_windows, meta_windows, false);
-                tile_workspace_windows(workspace, new_meat_window); // Tile new workspace for window
+                tile_workspace_windows(workspace, new_meta_window); // Tile new workspace for window
                 workspace.activate(0);
             } else {
                 // TODO: Define behavior for windows that are resized but cannot fit
