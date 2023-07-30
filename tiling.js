@@ -23,7 +23,7 @@ class Tilegroup {
         this.id = id;
     }
     check_fit(window) {
-        if(this.width + enums.window_spacing + window.width > this.max_width ||
+        if(this.width + window.width > this.max_width ||
             window.height > this.max_height)
             return false;
         return true
