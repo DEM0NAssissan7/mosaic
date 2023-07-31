@@ -181,7 +181,9 @@ function windows_to_descriptors(meta_windows) {
         if( meta_window.is_hidden() ||
             meta_window.is_attached_dialog() ||
             meta_window.window_type !== 0)
+        {
             continue;
+        }
         descriptors.push(new window_descriptor(meta_window, i));
     }
     return descriptors;
