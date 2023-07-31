@@ -8,6 +8,14 @@ Next-generation window management
 - Automatically manage workspaces
 - More powerful tiling features for GNOME (like corner tiling)
 
+# Installation instructions
+To install to your user extensions folder, do the following:
+1. Download the source code by any means (and decompress archive if necessary)
+2. Open a terminal in the directory of the project
+3. Run `./install.sh` to install the extension
+4. Log out and log back in
+5. Enable the extension using either an extension manager or by running `gnome-extensions enable mosaic@mawitime`
+
 # Implemented features:
 - 
 
