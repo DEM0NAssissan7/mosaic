@@ -63,10 +63,10 @@ class Tilegroup {
             this.max_height - window.height, // Max height
             this.root, // Root
             this.x + this.width, // X
-            this.y + window.height + enums.window_spacing, // Y
+            this.y + enums.window_spacing + window.height, // Y
             this.id + 1); // ID
         this.windows.push(window);
-        this.width += window.width + enums.window_spacing;
+        this.width += enums.window_spacing + window.width;
         this.height = Math.max(this.height, window.height);
         this.root.width = Math.max(this.root.width, this.x + window.width);
         this.root.height = Math.max(this.root.height, this.y + window.height);
