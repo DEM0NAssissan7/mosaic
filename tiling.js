@@ -58,8 +58,11 @@ class Tilegroup {
         }
     }
     add_new_window(window) {
+        let new_width = this.width;
+        if(this.id === 0 || new_width === 0)
+            new_width = window.width;
         window.subgroup = new Tilegroup( // Subgroup
-            window.width, // Max width
+            new_width, // Max width
             this.max_height - window.height, // Max height
             this.root, // Root
             this.x + this.width, // X
