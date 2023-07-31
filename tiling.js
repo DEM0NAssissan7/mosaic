@@ -29,58 +29,54 @@ class Tilegroup {
         return true
     }
     get_new_area(window) {
-        return Math.max(this.x + enums.window_spacing + window.width, this.root.width) * Math.max(this.y + enums.window_spacing + window.height, this.root.height);
+        return Math.max(this.width + enums.window_spacing + window.width, this.root.width) * Math.max(window.height, this.root.height);
     }
     get_optimal(window) {
-        let minimum_area = this.get_new_area(window);
+        let minimum_area = this.get_new_area(window); // Area if added to side
         if(!this.check_fit(window)) // If the window will exceed tilegroup bounds, force it to go to a subgroup
             minimum_area = Infinity;
-        let target_window = null;
-        for(let _window_ of this.windows) {
-            let subgroup = _window_.subgroup;
+        let tilegroup = this;
+        for(let _window of this.windows) {
+            let subgroup = _window.subgroup;
             if(!subgroup.check_fit(window))
                 continue;
             // See if placing the window under is better
             let area = subgroup.get_new_area(window);
-            let optimal = subgroup.get_optimal(window).area; // Check if it is better to use the subgroup
-            let _window = _window_;
+            let optimal = subgroup.get_optimal(window); // Check if it is better to use the subgroup
             if(optimal.area < area && optimal.area !== Infinity) {
                 area = optimal.area;
-                _window = optimal.window;
+                subgroup = optimal.tilegroup;
             }
             if(area < minimum_area) {
                 minimum_area = area;
-                target_window = _window;
+                tilegroup = subgroup;
             }
         }
         return {
             area: minimum_area,
-            window: target_window
+            tilegroup: tilegroup
         }
+    }
+    add_new_window(window) {
+        window.subgroup = new Tilegroup( // Subgroup
+            window.width, // Max width
+            this.max_height - window.height, // Max height
+            this.root, // Root
+            this.x + this.width, // X
+            this.y + window.height + enums.window_spacing, // Y
+            this.id + 1); // ID
+        this.windows.push(window);
+        this.width += window.width + enums.window_spacing;
+        this.height = Math.max(this.height, window.height);
+        this.root.width = Math.max(this.root.width, this.x + window.width);
+        this.root.height = Math.max(this.root.height, this.y + window.height);
     }
     add_window(window) {
         let optimal = this.get_optimal(window);
-        if(optimal.area === Infinity) {
-            // If window cannot fit at all, return null
+        if(optimal.area === Infinity)// If window cannot fit at all
             return null;
-        }
-        if(optimal.window === null) {
-            // Add window to the side
-            window.subgroup = new Tilegroup(
-                window.width,
-                this.max_height - window.height,
-                this.root,
-                this.x + this.width + enums.window_spacing,
-                this.y + window.height + enums.window_spacing,
-                this.id + 1);
-            this.windows.push(window);
-            this.width += window.width + enums.window_spacing;
-            this.height = Math.max(this.height, window.height);
-            this.root.width = Math.max(this.root.width, this.x + window.width);
-            this.root.height = Math.max(this.root.height, this.y + window.height);
-            return;
-        }
-        optimal.window.subgroup.add_window(window);
+        // Add window to the tilegroup
+        optimal.tilegroup.add_new_window(window);
     }
     get_width() {
         let width = 0;
