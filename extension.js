@@ -30,11 +30,12 @@ let workspace_manager = global.workspace_manager;
 
 function tile_window_workspace(meta_window) {
     if(!meta_window) return;
-    tiling.tile_workspace_windows(
-                                    meta_window.get_workspace(), 
-                                    meta_window, 
-                                    null, 
-                                    false);
+    let workspace = meta_window.get_workspace();
+    if(!workspace) return;
+    tiling.tile_workspace_windows(workspace, 
+                                  meta_window, 
+                                  null, 
+                                  false);
 }
 
 class Extension {
