@@ -52,16 +52,18 @@ class Extension {
         }
     }
 
-    sort_window_workspace(_, window) {
+    created_handler(_, window) {
         setTimeout(() => {
             tile_window_workspace(window);
         }, 100);
     }
 
-    sort_window_workspace_wm(_, win) {
+    destroyed_handler(_, win) {
         let window = win.meta_window;
         let workspace = window.get_workspace();
-        if(workspace.list_windows().length === 0) {
+        if( workspace.list_windows().length === 0 &&
+            workspace.index() !== workspace_manager.get_n_workspaces() - 1
+            ) {
             let previous_workspace = workspace.get_neighbor(-3);
             if(!previous_workspace)
                 return;
@@ -70,6 +72,10 @@ class Extension {
             return;
         }
         tile_window_workspace(window);
+    }
+    
+    switch_workspace_handler(_, win) {
+        tile_window_workspace(win.meta_window); // Tile when switching to a workspace. Helps to create a more cohesive experience.
     }
 
     enable() {
@@ -120,8 +126,9 @@ class Extension {
                 }
         }));
 
-        display_eventids.push(global.display.connect('window-created', this.sort_window_workspace));
-        wm_eventids.push(global.window_manager.connect('destroy', this.sort_window_workspace_wm));
+        display_eventids.push(global.display.connect('window-created', this.created_handler));
+        wm_eventids.push(global.window_manager.connect('destroy', this.destroyed_handler));
+        wm_eventids.push(global.window_manager.connect('switch-workspace', this.switch_workspace_handler));
 
         // Sort all workspaces at startup
         this.tile_all_workspaces();
