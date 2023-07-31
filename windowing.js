@@ -45,8 +45,10 @@ function win_to_new_workspace(window, switch_to_new) {
     
     global.workspace_manager.reorder_workspace(workspace, window_workspace.index() + 1) // Move the new workspace to the right of the current workspace
     window.change_workspace(workspace); // Move window to new workspace
-    let offset = global.display.get_monitor_geometry(window.get_monitor()); // Get top bar offset (if applicable)
+    let monitor = window.get_monitor();
+    let offset = global.display.get_monitor_geometry(monitor).height - workspace.get_work_area_for_monitor(monitor).height; // Get top bar offset (if applicable)
     let frame = window.get_frame_rect();
+    console.log(offset);
     move_window(window, false, 0, offset, frame.width, frame.height - offset);
     if(switch_to_new) workspace.activate(0);
     return workspace; // Return new workspace
