@@ -59,7 +59,17 @@ class Extension {
     }
 
     sort_window_workspace_wm(_, win) {
-        tile_window_workspace(win.meta_window);
+        let window = win.meta_window;
+        let workspace = window.get_workspace();
+        if(workspace.list_windows().length === 0) {
+            let previous_workspace = workspace.get_neighbor(-3);
+            if(!previous_workspace)
+                return;
+            previous_workspace.activate(0); // Move to window on the left
+            workspace_manager.remove_workspace(workspace);
+            return;
+        }
+        tile_window_workspace(window);
     }
 
     enable() {
