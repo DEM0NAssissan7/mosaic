@@ -230,7 +230,7 @@ function tile_workspace_windows(workspace, reference_meta_window, monitor, keep_
 function advanced_sort(windows) {
     let output_windows = [];
     let _windows = windows;
-    let vertical = false;
+    let vertical = true;
     while(_windows.length > 0) {
         let window;
         let index;
