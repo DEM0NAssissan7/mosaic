@@ -234,9 +234,9 @@ function advanced_sort(windows) {
     while(_windows.length > 0) {
         let window;
         let index;
+        let max = 0;
         if(vertical) {
             // Get tallest unused window
-            let max = 0;
             for(let i = 0; i < _windows.length; i++) {
                 let _window = _windows[i];
                 if(_window.height > max) {
@@ -248,7 +248,6 @@ function advanced_sort(windows) {
             vertical = false;
         } else {
             // Get longest unused window
-            let max = 0;
             for(let i = 0; i < _windows.length; i++) {
                 let _window = _windows[i];
                 if(_window.width > max) {
