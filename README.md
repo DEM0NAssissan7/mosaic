@@ -11,7 +11,7 @@ Next-generation window management
 # Implemented features:
 - 
 
-# Needed features:
+# Missing features:
 - Corner tiling
 - Auto-tiling
 
