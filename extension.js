@@ -61,14 +61,19 @@ class Extension {
     destroyed_handler(_, win) {
         let window = win.meta_window;
         let workspace = window.get_workspace();
+        if(!workspace) return;
         if( workspace.list_windows().length === 0 &&
             workspace.index() !== workspace_manager.get_n_workspaces() - 1
-            ) {
+            )
+        {
             let previous_workspace = workspace.get_neighbor(-3);
-            if(!previous_workspace)
+            if(previous_workspace === 1 ||
+                !previous_workspace ||
+                previous_workspace.index() === workspace.index()
+            )
                 return;
-            previous_workspace.activate(0); // Move to window on the left
-            workspace_manager.remove_workspace(workspace, 0);
+            previous_workspace.activate(0);
+            tiling.tile_workspace_windows(previous_workspace, false, window.get_monitor());
             return;
         }
         tile_window_workspace(window);
