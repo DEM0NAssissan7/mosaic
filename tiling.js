@@ -15,7 +15,6 @@ class Tilegroup {
         this.y = y;
         this.width = 0;
         this.height = 0;
-        console.log(max_height);
         this.max_width = max_width;
         this.max_height = max_height;
         this.root = root;
