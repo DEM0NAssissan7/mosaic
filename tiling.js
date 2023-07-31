@@ -29,7 +29,13 @@ class Tilegroup {
         return true
     }
     get_new_area(window) {
-        return Math.max(this.width + enums.window_spacing + window.width, this.root.width) * Math.max(window.height, this.root.height);
+        let new_width = Math.max(this.x + this.width + enums.window_spacing + window.width, this.root.width)
+        let new_height = Math.max(this.y + window.height, this.root.height);
+        return new_width * new_height;
+    }
+    get_new_area_vertical(window) {
+        let new_height = Math.max(this.y + this.height + enums.window_spacing + window.height, this.root.height);
+        return this.root.width * new_height;
     }
     get_optimal(window) {
         let minimum_area = this.get_new_area(window); // Area if added to side
@@ -41,9 +47,9 @@ class Tilegroup {
             if(!subgroup.check_fit(window))
                 continue;
             // See if placing the window under is better
-            let area = subgroup.get_new_area(window);
+            let area = subgroup.get_new_area_vertical(window); // Area if window is placed below
             let optimal = subgroup.get_optimal(window); // Check if it is better to use the subgroup
-            if(optimal.area < area && optimal.area !== Infinity) {
+            if(optimal.area < area) {
                 area = optimal.area;
                 subgroup = optimal.tilegroup;
             }
