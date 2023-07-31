@@ -1,3 +1,7 @@
+function get_timestamp() {
+    return global.get_current_time();
+}
+
 function get_primary_display() {
     return global.display.get_primary_monitor();
 }
@@ -49,7 +53,7 @@ function win_to_new_workspace(window, switch_to_new) {
     let offset = global.display.get_monitor_geometry(monitor).height - workspace.get_work_area_for_monitor(monitor).height; // Get top bar offset (if applicable)
     let frame = window.get_frame_rect();
     move_window(window, false, 0, offset, frame.width, frame.height - offset);
-    if(switch_to_new) workspace.activate(0);
+    if(switch_to_new) workspace.activate(get_timestamp());
     return workspace; // Return new workspace
 }
 
@@ -61,7 +65,7 @@ function move_back_window(window) {
         return;
     }
     window.change_workspace(previous_workspace); // Move window to previous workspace
-    previous_workspace.activate(0); // Switch to it
-    global.workspace_manager.remove_workspace(workspace, 0); // Clean old workspace
+    previous_workspace.activate(get_timestamp()); // Switch to it
+    // global.workspace_manager.remove_workspace(workspace, get_timestamp()); // Clean old workspace
     return previous_workspace;
 }

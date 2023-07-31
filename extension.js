@@ -73,7 +73,7 @@ class Extension {
                 previous_workspace.index() === workspace.index()
             )
                 return;
-            previous_workspace.activate(0);
+            previous_workspace.activate(windowing.get_timestamp());
             tiling.tile_workspace_windows(previous_workspace, false, window.get_monitor());
             return;
         }
