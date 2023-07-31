@@ -68,7 +68,7 @@ class Extension {
             if(!previous_workspace)
                 return;
             previous_workspace.activate(0); // Move to window on the left
-            workspace_manager.remove_workspace(workspace);
+            workspace_manager.remove_workspace(workspace, 0);
             return;
         }
         tile_window_workspace(window);
