@@ -68,7 +68,7 @@ class Tilegroup {
         this.windows.push(window);
         this.width += enums.window_spacing + window.width;
         this.height = Math.max(this.height, window.height);
-        this.root.width = Math.max(this.root.width, this.x + window.width);
+        this.root.width = Math.max(this.root.width, this.x + this.width);
         this.root.height = Math.max(this.root.height, this.y + window.height);
     }
     add_window(window) {
