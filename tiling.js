@@ -192,7 +192,12 @@ function tile_workspace_windows(workspace, reference_meta_window, monitor, keep_
 
     // Put needed window info into an enum so it can be transferred between arrays
     // Also sort by widest to thinnest
-    let windows = windows_to_descriptors(meta_windows).sort((a, b) => b.width - a.width);
+    const use_advanced_sort = true;
+    let windows = windows_to_descriptors(meta_windows);
+    if(use_advanced_sort)
+        windows = advanced_sort(windows);
+    else
+        windows = windows.sort((a, b) => b.width - a.width)
 
     let current_monitor;
     if(reference_meta_window)
@@ -211,4 +216,42 @@ function tile_workspace_windows(workspace, reference_meta_window, monitor, keep_
         0);
     add_windows(root_wingroup, windows, meta_windows, reference_meta_window, keep_oversized_windows);
     root_wingroup.draw_windows(meta_windows, false, root_wingroup.get_center_x_offset(work_area));
+}
+
+function advanced_sort(windows) {
+    let output_windows = [];
+    let _windows = windows;
+    let vertical = false;
+    while(_windows.length > 0) {
+        let window;
+        let index;
+        if(vertical) {
+            // Get tallest unused window
+            let max = 0;
+            for(let i = 0; i < _windows.length; i++) {
+                let _window = _windows[i];
+                if(_window.height > max) {
+                    max = _window.height;
+                    index = i;
+                    window = _window;
+                }
+            }
+            vertical = false;
+        } else {
+            // Get longest unused window
+            let max = 0;
+            for(let i = 0; i < _windows.length; i++) {
+                let _window = _windows[i];
+                if(_window.width > max) {
+                    max = _window.width;
+                    index = i;
+                    window = _window;
+                }
+            }
+            vertical = true;
+        }
+        output_windows.push(window);
+        _windows.splice(index, 1);
+    }
+    return output_windows;
 }
