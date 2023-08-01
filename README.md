@@ -26,6 +26,9 @@ To install to your user extensions folder, do the following:
 - New workspace on maximize
 - Effortless workspace management
 
+# Needs work:
+- Event listeners
+
 # Missing features:
 - Corner tiling
 - Automatic snap-tiling
