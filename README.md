@@ -22,23 +22,15 @@ To install to your user extensions folder, do the following:
 5. Enable the extension using either an extension manager or by running `gnome-extensions enable mosaic@mawitime`
 
 # Implemented features:
-- 
+- Center tiling
+- New workspace on maximize
+- Effortless workspace management
 
 # Missing features:
 - Corner tiling
-- Auto-tiling
-
-# Needs work:
-- Window tiling algorithm (major)
+- Automatic snap-tiling
 
 # Needs review:
 - Event listeners
 - Window tiling algorithm
 - APIs
-- Meta Timestamps
-
-# Known bugs:
-- Infinite workspace recursion in certain conditions
-
-# Notes:
-- There is something wrong with Tilegroup.get_optimal()
