@@ -46,6 +46,7 @@ function win_to_new_workspace(window, switch_to_new, _monitor) {
     if(!window) return;
     let window_workspace = window.get_workspace();
     if(!window_workspace) return;
+    if(!is_primary(window)) return window_workspace; // If the window is not on the primary workspace, do not move it at all.
     let adjacent_workspace = window_workspace.get_neighbor(-4); // Get workspace to the right
     let workspace;
     let monitor = window.get_monitor();
