@@ -169,7 +169,9 @@ function advanced_sort(_windows) {
 }
 
 // let sort_algorithm = advanced_sort;
-let sort_algorithm = windows => windows.sort((a, b) => b.width * b.height - a.width * a.height);
+// let sort_algorithm = windows => windows.sort((a, b) => b.width * b.height - a.width * a.height);
+let sort_algorithm = windows => windows.sort((a, b) => b.height - a.height);
+// let sort_algorithm = advanced_sort;
 
 function windows_to_descriptors(meta_windows) {
     let descriptors = [];
