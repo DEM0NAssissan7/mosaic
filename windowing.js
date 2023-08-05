@@ -5,7 +5,7 @@ function get_timestamp() {
     return global.get_current_time();
 }
 
-function get_primary_display() {
+function get_primary_monitor() {
     return global.display.get_primary_monitor();
 }
 
