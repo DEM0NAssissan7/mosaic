@@ -81,7 +81,7 @@ function move_back_window(window) {
         console.error("There is no workspace to the left.");
         return;
     }
-    if(!tiling.test_window_fit(window, previous_workspace, window.get_monitor())) // Make sure there is space for the window in the previous workspace
+    if(!tiling.test_window_fit(window, previous_workspace)) // Make sure there is space for the window in the previous workspace
         return workspace;
     window.change_workspace(previous_workspace); // Move window to previous workspace
     previous_workspace.activate(get_timestamp()); // Switch to it
