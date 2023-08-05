@@ -63,7 +63,7 @@ class Extension {
         let window = win.meta_window;
         let workspace = window.get_workspace();
         if(!workspace) return;
-        if( workspace.list_windows().length === 0 &&
+        if( windowing.get_monitor_workspace_windows(workspace, window.get_monitor()).length === 0 &&
             workspace.index() !== workspace_manager.get_n_workspaces() - 1
             )
         {
@@ -99,7 +99,8 @@ class Extension {
                     let workspace = window.get_workspace();
                     size_changed = true;
                     
-                    if(window.maximized_horizontally === true && window.maximized_vertically === true && windowing.get_all_workspace_windows().length !== 1) {
+                    let monitor = window.get_monitor();
+                    if(window.maximized_horizontally === true && window.maximized_vertically === true && windowing.get_all_workspace_windows(monitor).length !== 1) {
                         // If maximized (and not alone), move to new workspace and activate it if it is on the active workspace
                         let new_workspace = windowing.win_to_new_workspace(window, workspace.index() === window.get_workspace().index());
                         /* We mark the window as activated by using its id to index an array
@@ -107,19 +108,26 @@ class Extension {
                             of the current workspace changes, it does not move the maximized window to an unrelated
                             window.
                         */
-                        maximized_windows[id] = new_workspace.index(); // Mark window as maximized
-                        tiling.tile_workspace_windows(workspace, false, window.get_monitor(), false); // Sort the workspace where the window came from
+                        maximized_windows[id] = {
+                            workspace: new_workspace.index(),
+                            monitor: monitor
+                        }; // Mark window as maximized
+                        tiling.tile_workspace_windows(workspace, false, monitor, false); // Sort the workspace where the window came from
                         size_changed = false;
                         return;
                     } else if(
                     (window.maximized_horizontally === false ||
                     window.maximized_vertically === false) && // If window is not maximized
-                    maximized_windows[id] === workspace.index() &&
-                    windowing.get_all_workspace_windows().length === 1// If the workspace anatomy has not changed
+                    maximized_windows[id] &&
+                    windowing.get_all_workspace_windows(monitor).length === 1// If the workspace anatomy has not changed
                     ) {
-                        maximized_windows[id] = false;
-                        windowing.move_back_window(window); // Move the window back to its workspace
-                        tile_window_workspace(window);
+                        if( maximized_windows[id].workspace === workspace.index() &&
+                            maximized_windows[id].monitor === monitor
+                        ) {
+                            maximized_windows[id] = false;
+                            windowing.move_back_window(window); // Move the window back to its workspace
+                            tile_window_workspace(window);
+                        }
                     }
                     if(size_changed) {
                         tiling.tile_workspace_windows(window.get_workspace(), window, null, true);

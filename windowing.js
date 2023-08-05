@@ -22,16 +22,21 @@ function get_focused_window() {
     }
 }
 
-function get_all_workspace_windows() {
-    return get_workspace().list_windows();
+function get_all_workspace_windows(monitor) {
+    return get_monitor_workspace_windows(get_workspace(), monitor);
 }
 
 function move_window(window, ignore_top_bar, x, y, w, h) {
     window.move_resize_frame(ignore_top_bar, x, y, w, h);
 }
 
-function configure_window(window) {
-    
+function get_monitor_workspace_windows(workspace, monitor) {
+    let _windows = [];
+    let windows = workspace.list_windows();
+    for(let window of windows)
+        if(window.get_monitor() === monitor)
+            _windows.push(window);
+    return _windows;
 }
 
 function win_to_new_workspace(window, switch_to_new) {
@@ -40,18 +45,18 @@ function win_to_new_workspace(window, switch_to_new) {
     if(!window_workspace) return;
     let adjacent_workspace = window_workspace.get_neighbor(-4); // Get workspace to the right
     let workspace;
+    let monitor = window.get_monitor();
     // This is to prevent an infinite workspace creation bug
     if(!adjacent_workspace) {
         console.warn("Could not get right neighbor for workspace " + window_workspace.index());
         workspace = global.workspace_manager.append_new_workspace(false, 0);
-    } else if(adjacent_workspace.list_windows().length > 0)
+    } else if(get_monitor_workspace_windows(adjacent_workspace, monitor).length > 0)
         workspace = global.workspace_manager.append_new_workspace(false, 0);
     else
         workspace = adjacent_workspace;
     
     global.workspace_manager.reorder_workspace(workspace, window_workspace.index() + 1) // Move the new workspace to the right of the current workspace
     window.change_workspace(workspace); // Move window to new workspace
-    let monitor = window.get_monitor();
     let offset = global.display.get_monitor_geometry(monitor).height - workspace.get_work_area_for_monitor(monitor).height; // Get top bar offset (if applicable)
     let frame = window.get_frame_rect();
     move_window(window, false, 0, offset, frame.width, frame.height - offset);
