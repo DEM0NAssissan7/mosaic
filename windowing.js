@@ -66,10 +66,11 @@ function win_to_new_workspace(window, switch_to_new, _monitor) {
     let offset = global.display.get_monitor_geometry(monitor).height - workspace.get_work_area_for_monitor(monitor).height; // Get top bar offset (if applicable)
     let frame = window.get_frame_rect();
     move_window(window, false, 0, offset, frame.width, frame.height - offset); // Move window to display properly
-    tiling.tile_workspace_windows(workspace, window, false, true); // Tile new workspace for window
     tiling.tile_workspace_windows(window_workspace, false, monitor, false); // Tile the workspace where the window came from
     if(switch_to_new)
         workspace.activate(get_timestamp()); // Switch to new workspace if specified
+    // window.move_to_monitor(monitor); // Move to proper monitor
+    tiling.tile_workspace_windows(workspace, window, false, true); // Tile new workspace for window
     return workspace; // Return new workspace
 }
 
