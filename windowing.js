@@ -89,7 +89,7 @@ function move_back_window(window) {
 }
 
 function move_oversized_window(window) {
-    let primary_monitor = global.display.get_primary_monitor()
+    let primary_monitor = get_primary_monitor()
     let monitor = window.get_monitor();
     let workspace = window.get_workspace();
     let switch_to_new = workspace.index() === get_workspace().index();
@@ -107,7 +107,7 @@ function move_oversized_window(window) {
 }
 
 function is_primary(window) {
-    if(window.get_monitor() === global.display.get_primary_monitor())
+    if(window.get_monitor() === get_primary_monitor())
         return true;
     return false;
 }
