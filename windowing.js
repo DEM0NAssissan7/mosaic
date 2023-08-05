@@ -93,9 +93,9 @@ function move_oversized_window(window) {
     let monitor = window.get_monitor();
     let workspace = window.get_workspace();
     let switch_to_new = workspace.index() === get_workspace().index();
-    if(monitor === primary_monitor) { // If the window is on the primary monitor
+    if(monitor === primary_monitor) // If the window is on the primary monitor
         return win_to_new_workspace(window, switch_to_new);
-    }
+
     // let n_monitors = global.display.get_n_monitors();
     // for(let i = 0; i < n_monitors; i++) {
     //     if(tiling.test_window_fit(window, workspace, i)) {
