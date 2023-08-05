@@ -38,6 +38,10 @@ function tile_window_workspace(meta_window) {
                                   false);
 }
 
+let size_changed = false;
+let event_timeout;
+let expanded_window_timeout;
+
 class Extension {
     constructor() {
     }
@@ -69,10 +73,14 @@ class Extension {
             workspace.index() !== workspace_manager.get_n_workspaces() - 1
             )
         {
-            if(previous_workspace === 1 ||
-                previous_workspace.index() === workspace.index()
-            )
-                return;
+            if(previous_workspace === 1 || previous_workspace.index() === workspace.index()) {
+                previous_workspace = workspace.get_neighbor(-4); // The new workspace will be the one on the right instead.
+                // Recheck to see if it is still a problematic workspace
+                if( previous_workspace === 1 ||
+                    previous_workspace.index() === workspace.index() ||
+                    previous_workspace.index() === global.workspace_manager.get_n_workspaces() - 1)
+                    return;
+            }
             previous_workspace.activate(windowing.get_timestamp());
             tiling.tile_workspace_windows(previous_workspace, false, window.get_monitor());
             return;
@@ -84,69 +92,65 @@ class Extension {
         tile_window_workspace(win.meta_window); // Tile when switching to a workspace. Helps to create a more cohesive experience.
     }
 
+    size_changed_handler(_, win) {
+        if(!size_changed) {
+            // Deal with maximizing to a new workspace and vice versa
+            let window = win.meta_window;
+            let id = window.get_id();
+            let workspace = window.get_workspace();
+            size_changed = true;
+            
+            let monitor = window.get_monitor();
+            if(window.maximized_horizontally === true && window.maximized_vertically === true && windowing.get_all_workspace_windows(monitor).length !== 1) {
+                clearTimeout(expanded_window_timeout);
+                expanded_window_timeout = setTimeout(() => {
+                    // If maximized (and not alone), move to new workspace and activate it if it is on the active workspace
+                    let new_workspace = windowing.move_oversized_window(window);
+                    /* We mark the window as activated by using its id to index an array
+                        We put the value as the active workspace index so that if the workspace anatomy
+                        of the current workspace changes, it does not move the maximized window to an unrelated
+                        window.
+                    */
+                    maximized_windows[id] = {
+                        workspace: new_workspace.index(),
+                        monitor: monitor
+                    }; // Mark window as maximized
+                    tiling.tile_workspace_windows(workspace, false, monitor, false); // Sort the workspace where the window came from
+                }, 30);
+                size_changed = false;
+                return;
+            } else if(
+            (window.maximized_horizontally === false ||
+            window.maximized_vertically === false) && // If window is not maximized
+            maximized_windows[id] &&
+            windowing.get_all_workspace_windows(monitor).length === 1// If the workspace anatomy has not changed
+            ) {
+                if( maximized_windows[id].workspace === workspace.index() &&
+                    maximized_windows[id].monitor === monitor
+                ) {
+                    maximized_windows[id] = false;
+                    windowing.move_back_window(window); // Move the window back to its workspace
+                    tile_window_workspace(window);
+                }
+            }
+            if(size_changed) {
+                tiling.tile_workspace_windows(window.get_workspace(), window, null, true);
+                clearTimeout(event_timeout);
+                event_timeout = setTimeout(() => {
+                    tile_window_workspace(window); // Fully sort workspace after a time
+                }, 1000);
+                size_changed = false;
+            }
+        }
+    }
+
     enable() {
         console.log("[MOSAIC]: Starting Mosaic layout manager.");
         
-        let size_changed = false;
-        let event_timeout;
-        let expanded_window_timeout;
-        wm_eventids.push(global.window_manager.connect(
-            'size-changed', // When size is changed
-            (_, win) => {
-                if(!size_changed) {
-                    // Deal with maximizing to a new workspace and vice versa
-                    let window = win.meta_window;
-                    let id = window.get_id();
-                    let workspace = window.get_workspace();
-                    size_changed = true;
-                    
-                    let monitor = window.get_monitor();
-                    if(window.maximized_horizontally === true && window.maximized_vertically === true && windowing.get_all_workspace_windows(monitor).length !== 1) {
-                        clearTimeout(expanded_window_timeout);
-                        expanded_window_timeout = setTimeout(() => {
-                            // If maximized (and not alone), move to new workspace and activate it if it is on the active workspace
-                            let new_workspace = windowing.move_oversized_window(window);
-                            /* We mark the window as activated by using its id to index an array
-                                We put the value as the active workspace index so that if the workspace anatomy
-                                of the current workspace changes, it does not move the maximized window to an unrelated
-                                window.
-                            */
-                            maximized_windows[id] = {
-                                workspace: new_workspace.index(),
-                                monitor: monitor
-                            }; // Mark window as maximized
-                            tiling.tile_workspace_windows(workspace, false, monitor, false); // Sort the workspace where the window came from
-                        }, 30);
-                        size_changed = false;
-                        return;
-                    } else if(
-                    (window.maximized_horizontally === false ||
-                    window.maximized_vertically === false) && // If window is not maximized
-                    maximized_windows[id] &&
-                    windowing.get_all_workspace_windows(monitor).length === 1// If the workspace anatomy has not changed
-                    ) {
-                        if( maximized_windows[id].workspace === workspace.index() &&
-                            maximized_windows[id].monitor === monitor
-                        ) {
-                            maximized_windows[id] = false;
-                            windowing.move_back_window(window); // Move the window back to its workspace
-                            tile_window_workspace(window);
-                        }
-                    }
-                    if(size_changed) {
-                        tiling.tile_workspace_windows(window.get_workspace(), window, null, true);
-                        clearTimeout(event_timeout);
-                        event_timeout = setTimeout(() => {
-                            tile_window_workspace(window); // Fully sort workspace after a time
-                        }, 1000);
-                        size_changed = false;
-                    }
-                }
-        }));
-
+        wm_eventids.push(global.window_manager.connect('size-changed', this.size_changed_handler));
         display_eventids.push(global.display.connect('window-created', this.created_handler));
         wm_eventids.push(global.window_manager.connect('destroy', this.destroyed_handler));
-        wm_eventids.push(global.window_manager.connect('switch-workspace', this.switch_workspace_handler));
+        // wm_eventids.push(global.window_manager.connect('switch-workspace', this.switch_workspace_handler));
 
         // Sort all workspaces at startup
         this.tile_all_workspaces();
