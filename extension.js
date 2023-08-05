@@ -62,14 +62,14 @@ class Extension {
     destroyed_handler(_, win) {
         let window = win.meta_window;
         let workspace = window.get_workspace();
-        if(!workspace) return;
+        let previous_workspace = workspace.get_neighbor(-3);
+        if(!workspace || !previous_workspace) return;
         if( windowing.get_monitor_workspace_windows(workspace, window.get_monitor()).length === 0 &&
+            windowing.get_monitor_workspace_windows(previous_workspace, window.get_monitor()).length !== 0 &&
             workspace.index() !== workspace_manager.get_n_workspaces() - 1
             )
         {
-            let previous_workspace = workspace.get_neighbor(-3);
             if(previous_workspace === 1 ||
-                !previous_workspace ||
                 previous_workspace.index() === workspace.index()
             )
                 return;
