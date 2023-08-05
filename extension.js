@@ -21,6 +21,7 @@ const extension = imports.misc.extensionUtils.getCurrentExtension();
 
 const windowing = extension.imports.windowing;
 const tiling = extension.imports.tiling;
+const snapping = extension.imports.snapping;
 
 let wm_eventids = [];
 let display_eventids = [];
@@ -163,6 +164,7 @@ class Extension {
             global.window_manager.disconnect(eventid);
         for(let eventid of display_eventids)
             global.display.disconnect(eventid);
+        snapping.clear_actors();
     }
 }
 
