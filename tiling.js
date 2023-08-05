@@ -241,7 +241,8 @@ function tile_workspace_windows(workspace, reference_meta_window, monitor, keep_
     if(!workspace) // Failsafe for undefined workspace
         return;
     let meta_windows = workspace.list_windows();
-
+    if(meta_windows.length === 0)
+        return;
 
     let current_monitor = null;
     if(reference_meta_window)
@@ -256,7 +257,7 @@ function tile_workspace_windows(workspace, reference_meta_window, monitor, keep_
     let windows = windows_to_descriptors(meta_windows, current_monitor);
 
     let work_area = workspace.get_work_area_for_monitor(current_monitor); // Get working area for current space
-    ztile(windows, meta_windows, work_area, reference_meta_window, keep_oversized_windows, skip_window_draw);
+    return ztile(windows, meta_windows, work_area, reference_meta_window, keep_oversized_windows, skip_window_draw);
 }
 
 function test_window_fit(window, workspace, monitor) {
