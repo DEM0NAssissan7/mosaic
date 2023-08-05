@@ -96,12 +96,12 @@ function move_oversized_window(window) {
     if(monitor === primary_monitor) { // If the window is on the primary monitor
         return win_to_new_workspace(window, switch_to_new);
     }
-    let n_monitors = global.display.get_n_monitors();
-    for(let i = 0; i < n_monitors; i++) {
-        if(tiling.test_window_fit(window, workspace, i)) {
-            window.move_to_monitor(i); // Move to monitor if there is space
-            return workspace;
-        }
-    }
+    // let n_monitors = global.display.get_n_monitors();
+    // for(let i = 0; i < n_monitors; i++) {
+    //     if(tiling.test_window_fit(window, workspace, i)) {
+    //         window.move_to_monitor(i); // Move to monitor if there is space
+    //         return workspace;
+    //     }
+    // }
     return win_to_new_workspace(window, switch_to_new, primary_monitor); // Move window to primary monitor if it can't fit in any other monitor.
 }
