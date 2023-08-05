@@ -63,7 +63,6 @@ function win_to_new_workspace(window, switch_to_new, _monitor) {
     
     global.workspace_manager.reorder_workspace(workspace, adjacent_workspace.index()) // Move the new workspace to the right of the current workspace
     window.change_workspace(workspace); // Move window to new workspace
-    window.move_to_monitor(monitor); // Move to proper monitor
     let offset = global.display.get_monitor_geometry(monitor).height - workspace.get_work_area_for_monitor(monitor).height; // Get top bar offset (if applicable)
     let frame = window.get_frame_rect();
     move_window(window, false, 0, offset, frame.width, frame.height - offset); // Move window to display properly
