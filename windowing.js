@@ -105,3 +105,9 @@ function move_oversized_window(window) {
     // }
     return win_to_new_workspace(window, switch_to_new, primary_monitor); // Move window to primary monitor if it can't fit in any other monitor.
 }
+
+function is_primary(window) {
+    if(window.get_monitor() === global.display.get_primary_monitor())
+        return true;
+    return false;
+}
