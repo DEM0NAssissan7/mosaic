@@ -189,7 +189,7 @@ function windows_to_descriptors(meta_windows, monitor) {
     return descriptors;
 }
 
-function ztile(_windows, meta_windows, work_area, new_meta_window, keep_oversized_windows) {
+function ztile(_windows, meta_windows, work_area, new_meta_window, keep_oversized_windows, skip_window_draw) {
     total_width = 0;
     total_height = 0;
     max_width = work_area.width;
@@ -208,6 +208,8 @@ function ztile(_windows, meta_windows, work_area, new_meta_window, keep_oversize
             if(optimal.area === Infinity &&
                 windowing.get_all_workspace_windows(monitor).length > 1)
             {
+                if(skip_window_draw)
+                    return false;
                 /* For windows that cannot fit, we move the new window (if applicable) to a new workspace
                     and focus it.
                 */
@@ -220,11 +222,8 @@ function ztile(_windows, meta_windows, work_area, new_meta_window, keep_oversize
                 }
                 new_windows = sort_algorithm(new_windows);
                 ztile(new_windows, meta_windows, work_area, false, true);
-                if(!keep_oversized_windows) {
-                    let workspace = windowing.win_to_new_workspace(new_meta_window, false);
-                    tile_workspace_windows(workspace, new_meta_window, false, true); // Tile new workspace for window
-                    workspace.activate(windowing.get_timestamp());
-                }
+                if(!keep_oversized_windows)
+                    windowing.move_oversized_window(new_meta_window);
                 return;
             }
         }
@@ -233,24 +232,33 @@ function ztile(_windows, meta_windows, work_area, new_meta_window, keep_oversize
     }
     let x = (max_width - total_width) / 2 + work_area.x;
     let y = (max_height - total_height) / 2 + work_area.y;
+    if(skip_window_draw)
+        return true;
     root_window.draw_window(meta_windows, x, y);
 }
 
-function tile_workspace_windows(workspace, reference_meta_window, monitor, keep_oversized_windows) {
+function tile_workspace_windows(workspace, reference_meta_window, monitor, keep_oversized_windows, skip_window_draw) {
     if(!workspace) // Failsafe for undefined workspace
         return;
     let meta_windows = workspace.list_windows();
 
 
-    let current_monitor;
+    let current_monitor = null;
     if(reference_meta_window)
         current_monitor = reference_meta_window.get_monitor();
     else
         current_monitor = monitor;
 
+    if(!(current_monitor >= 0) || current_monitor === null) // If there is no monitor
+        throw new Error("No window specified: " + current_monitor); // Throw an error
+
     // Put needed window info into an enum so it can be transferred between arrays
     let windows = windows_to_descriptors(meta_windows, current_monitor);
 
     let work_area = workspace.get_work_area_for_monitor(current_monitor); // Get working area for current space
-    ztile(windows, meta_windows, work_area, reference_meta_window, keep_oversized_windows);
+    ztile(windows, meta_windows, work_area, reference_meta_window, keep_oversized_windows, skip_window_draw);
+}
+
+function test_window_fit(window, workspace, monitor) {
+    return tile_workspace_windows(workspace, window, monitor, true, true);
 }

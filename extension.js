@@ -89,6 +89,7 @@ class Extension {
         
         let size_changed = false;
         let event_timeout;
+        let expanded_window_timeout;
         wm_eventids.push(global.window_manager.connect(
             'size-changed', // When size is changed
             (_, win) => {
@@ -101,18 +102,21 @@ class Extension {
                     
                     let monitor = window.get_monitor();
                     if(window.maximized_horizontally === true && window.maximized_vertically === true && windowing.get_all_workspace_windows(monitor).length !== 1) {
-                        // If maximized (and not alone), move to new workspace and activate it if it is on the active workspace
-                        let new_workspace = windowing.win_to_new_workspace(window, workspace.index() === window.get_workspace().index());
-                        /* We mark the window as activated by using its id to index an array
-                            We put the value as the active workspace index so that if the workspace anatomy
-                            of the current workspace changes, it does not move the maximized window to an unrelated
-                            window.
-                        */
-                        maximized_windows[id] = {
-                            workspace: new_workspace.index(),
-                            monitor: monitor
-                        }; // Mark window as maximized
-                        tiling.tile_workspace_windows(workspace, false, monitor, false); // Sort the workspace where the window came from
+                        clearTimeout(expanded_window_timeout);
+                        expanded_window_timeout = setTimeout(() => {
+                            // If maximized (and not alone), move to new workspace and activate it if it is on the active workspace
+                            let new_workspace = windowing.move_oversized_window(window);
+                            /* We mark the window as activated by using its id to index an array
+                                We put the value as the active workspace index so that if the workspace anatomy
+                                of the current workspace changes, it does not move the maximized window to an unrelated
+                                window.
+                            */
+                            maximized_windows[id] = {
+                                workspace: new_workspace.index(),
+                                monitor: monitor
+                            }; // Mark window as maximized
+                            tiling.tile_workspace_windows(workspace, false, monitor, false); // Sort the workspace where the window came from
+                        }, 30);
                         size_changed = false;
                         return;
                     } else if(
