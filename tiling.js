@@ -20,7 +20,6 @@ class window_descriptor{
         this.height = frame.height;
         this.maximized_horizontally = meta_window.maximized_horizontally;
         this.maximized_vertically = meta_window.maximized_vertically;
-        this.child_far_y_limit;
         this.right_child = false;
         this.under_child = false;
     }
@@ -28,8 +27,6 @@ class window_descriptor{
         let child_x = this.x + this.width + enums.window_spacing;
         if(check_collision(child_x, this.y, window.width, window.height))
             return false;
-        // if(window.height > this.height)
-        //     return false;
         if(child_x + window.width > max_width)
             return false;
         return true;
@@ -38,13 +35,8 @@ class window_descriptor{
         let child_y = this.y + this.height + enums.window_spacing;
         if(check_collision(this.x, child_y, window.width, window.height))
             return false;
-        // if(window.width > this.width)
-        //     return false;
-        let child_far_y = child_y + window.height;
         if(child_y + window.height > max_height)
             return false;
-        // if(child_far_y > this.child_far_y_limit)
-        //     return false;
         return true;
     }
     check_possible_fit(window) {
