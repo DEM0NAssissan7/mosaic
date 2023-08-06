@@ -76,7 +76,6 @@ class window_descriptor{
         total_width = Math.max(this.x + this.width + enums.window_spacing + window.width, total_width);
         window.x = this.x + this.width + enums.window_spacing;
         window.y = this.y;
-        window.child_far_y_limit = this.y + this.height + enums.window_spacing;
         this.right_child = window;
     }
     add_under_child(window) {
