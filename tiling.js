@@ -242,9 +242,10 @@ function get_tiled_window(_windows, work_area) {
             retval.overflow = true;
             continue;
         }
-        if(optimal.handler)
+        if(optimal.handler) {
             optimal.handler(window);
         added_windows.push(window);
+        }
     }
     return retval;
 }
