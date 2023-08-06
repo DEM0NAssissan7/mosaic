@@ -154,7 +154,7 @@ class Extension {
         // wm_eventids.push(global.window_manager.connect('switch-workspace', this.switch_workspace_handler));
 
         // Sort all workspaces at startup
-        this.tile_all_workspaces();
+        setTimeout(this.tile_all_workspaces, 300);
     }
 
     disable() {
