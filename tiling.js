@@ -82,8 +82,6 @@ class window_descriptor{
         total_height = Math.max(this.y + this.height + enums.window_spacing + window.height, total_height);
         window.x = this.x;
         window.y = this.y + this.height + enums.window_spacing;
-        window.child_far_y_limit = this.child_far_y_limit;
-
         this.under_child = window;
     }
     get_optimal_handler(child_window) {
