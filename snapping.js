@@ -13,8 +13,12 @@ function rect(x, y, width, height) {
     main.uiGroup.add_actor(box);
 }
 
-function clear_actors() {
+function remove_boxes() {
     for(let box of boxes)
         main.uiGroup.remove_actor(box);
     boxes = [];
+}
+
+function clear_actors() {
+    remove_boxes();
 }
