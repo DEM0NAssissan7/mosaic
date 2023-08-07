@@ -251,5 +251,9 @@ function test_window_fit(window, workspace, monitor) {
     let windows = working_info.windows;
     windows.push(new window_descriptor(window, windows.length));
 
-    return !(get_tiled_window(windows, working_info.work_area).overflow);
+    for(let window of workspace.list_windows())
+        if(window.maximized_horizontally && window.maximized_vertically)
+            return false;
+
+    return !(tile(windows, working_info.work_area).overflow);
 }
