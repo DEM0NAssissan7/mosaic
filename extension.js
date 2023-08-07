@@ -145,12 +145,23 @@ class Extension {
         }
     }
 
+    grab_op_begin_handler(_, window, grabpo) {
+        // tile_window_workspace(window);
+    }
+    grab_op_end_handler(_, window, grabpo) {
+        if( (grabpo === 1 || grabpo === 1025) &&
+            !(window.maximized_horizontally === true && window.maximized_vertically === true))
+            tiling.tile_workspace_windows(window.get_workspace(), window, null, true);
+    }
+
     enable() {
         console.log("[MOSAIC]: Starting Mosaic layout manager.");
         
         wm_eventids.push(global.window_manager.connect('size-changed', this.size_changed_handler));
         display_eventids.push(global.display.connect('window-created', this.created_handler));
         wm_eventids.push(global.window_manager.connect('destroy', this.destroyed_handler));
+        display_eventids.push(global.display.connect("grab-op-begin", this.grab_op_begin_handler));
+        display_eventids.push(global.display.connect("grab-op-end", this.grab_op_end_handler));
         // wm_eventids.push(global.window_manager.connect('switch-workspace', this.switch_workspace_handler));
 
         // Sort all workspaces at startup
