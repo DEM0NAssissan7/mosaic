@@ -230,7 +230,12 @@ function tile_workspace_windows(workspace, reference_meta_window, monitor, keep_
     let work_area = working_info.work_area;
 
     let tile_info = tile(windows, work_area);
-    if(tile_info.overflow && !keep_oversized_windows && reference_meta_window) { // Overflow clause
+    let overflow = tile_info.overflow;
+    for(let window of workspace.list_windows())
+        if(window.maximized_horizontally && window.maximized_vertically)
+            overflow = true;
+
+    if(overflow && !keep_oversized_windows && reference_meta_window) { // Overflow clause
         let id = reference_meta_window.get_id();
         let _windows = windows;
         for(let i = 0; i < _windows.length; i++) {
