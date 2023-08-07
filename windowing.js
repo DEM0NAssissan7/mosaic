@@ -111,3 +111,12 @@ function is_primary(window) {
         return true;
     return false;
 }
+
+function is_excluded(meta_window) {
+    if( meta_window.is_hidden() ||
+        meta_window.is_attached_dialog() ||
+        meta_window.window_type !== 0
+    )
+        return true;
+    return false;
+}
