@@ -82,6 +82,9 @@ function tile(windows, work_area) {
     let total_width = 0;
     let total_height = 0;
     let x, y;
+
+    let overflow = false;
+
     if(!vertical) { // If the mode is going to be horizontal
         let window_widths = 0;
         windows.map(w => window_widths += w.width + enums.window_spacing)
@@ -102,8 +105,10 @@ function tile(windows, work_area) {
                 level = levels[level_index];
             }
             if( Math.max(window.height, level.height) + total_height > work_area.height || 
-                window.width + level.width > work_area.width)
+                window.width + level.width > work_area.width){
+                overflow = true;
                 continue;
+            }
             level.windows.push(window);
             if(level.width !== 0)
                 level.width += enums.window_spacing;
@@ -149,7 +154,7 @@ function tile(windows, work_area) {
     return {
         x: x,
         y: y,
-        overflow: (total_width > work_area.width || total_height > work_area.height),
+        overflow: overflow,
         vertical: vertical,
         levels: levels
     }
