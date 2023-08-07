@@ -29,11 +29,8 @@ function windows_to_descriptors(meta_windows, monitor) {
     for(let i = 0; i < meta_windows.length; i++) {
         let meta_window = meta_windows[i];
         // Exclusion clause: windows we do not want to tile
-        if( meta_window.is_hidden() ||
-            meta_window.is_attached_dialog() ||
-            meta_window.window_type !== 0 ||
-            meta_window.get_monitor() !== monitor
-            )
+        if( windowing.is_excluded(meta_window) ||
+            meta_window.get_monitor() !== monitor)
             continue;
         descriptors.push(new window_descriptor(meta_window, i));
     }
