@@ -72,19 +72,21 @@ class Extension {
         let workspace = window.get_workspace();
         let previous_workspace = workspace.get_neighbor(-3);
         if(!workspace || !previous_workspace) return;
+
+        if(previous_workspace === 1 || previous_workspace.index() === workspace.index()) {
+            previous_workspace = workspace.get_neighbor(-4); // The new workspace will be the one on the right instead.
+            // Recheck to see if it is still a problematic workspace
+            if( previous_workspace === 1 ||
+                previous_workspace.index() === workspace.index() ||
+                previous_workspace.index() === global.workspace_manager.get_n_workspaces() - 1)
+                return;
+        }
+        
         if( windowing.get_monitor_workspace_windows(workspace, window.get_monitor()).length === 0 &&
             windowing.get_monitor_workspace_windows(previous_workspace, window.get_monitor()).length !== 0 &&
             workspace.index() !== workspace_manager.get_n_workspaces() - 1
             )
         {
-            if(previous_workspace === 1 || previous_workspace.index() === workspace.index()) {
-                previous_workspace = workspace.get_neighbor(-4); // The new workspace will be the one on the right instead.
-                // Recheck to see if it is still a problematic workspace
-                if( previous_workspace === 1 ||
-                    previous_workspace.index() === workspace.index() ||
-                    previous_workspace.index() === global.workspace_manager.get_n_workspaces() - 1)
-                    return;
-            }
             previous_workspace.activate(windowing.get_timestamp());
             tiling.tile_workspace_windows(previous_workspace, false, window.get_monitor());
             return;
