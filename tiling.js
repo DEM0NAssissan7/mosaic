@@ -53,10 +53,15 @@ function Level(work_area) {
     this.work_area = work_area;
 }
 
-Level.prototype.draw_horizontal = function(meta_windows, y) {
+Level.prototype.draw_horizontal = function(meta_windows, work_area, y) {
     let x = this.x;
     for(let window of this.windows) {
-        window.draw(meta_windows, x, y);
+        let center_offset = (work_area.height / 2 + work_area.y) - (y + window.height / 2);
+        let y_offset = 0;
+        if(center_offset > 0)
+            y_offset = Math.min(center_offset, this.height - window.height);
+
+        window.draw(meta_windows, x, y + y_offset);
         x += window.width + enums.window_spacing;
     }
 }
@@ -88,7 +93,7 @@ function tile(windows, work_area) {
         let level_index = 0;
         
         for(let window of windows) { // Add windows to levels
-            if(level.width > avg_level_width) { // Create a new level
+            if(level.width + enums.window_spacing + window.width > work_area.width) { // Create a new level
                 total_width = Math.max(level.width, total_width);
                 total_height += level.height + enums.window_spacing;
                 level.x = (work_area.width - level.width) / 2 + work_area.x;
@@ -96,6 +101,9 @@ function tile(windows, work_area) {
                 level_index++;
                 level = levels[level_index];
             }
+            if( Math.max(window.height, level.height) + total_height > work_area.height || 
+                window.width + level.width > work_area.width)
+                continue;
             level.windows.push(window);
             if(level.width !== 0)
                 level.width += enums.window_spacing;
@@ -173,14 +181,14 @@ function get_working_info(workspace, window, monitor) {
     }
 }
 
-function draw_tile(tile_info, meta_windows) {
+function draw_tile(tile_info, work_area, meta_windows) {
     let levels = tile_info.levels;
     let _x = tile_info.x;
     let _y = tile_info.y;
     if(!tile_info.vertical) { // Horizontal tiling
         let y = _y;
         for(let level of levels) {
-            level.draw_horizontal(meta_windows, y);
+            level.draw_horizontal(meta_windows, work_area, y);
             y += level.height + enums.window_spacing;
         }
     } else { // Vertical
@@ -212,7 +220,7 @@ function tile_workspace_windows(workspace, reference_meta_window, monitor, keep_
         windowing.move_oversized_window(reference_meta_window);
         tile_info = tile(_windows, work_area);
     }
-    draw_tile(tile_info, meta_windows);
+    draw_tile(tile_info, work_area, meta_windows);
 }
 
 function test_window_fit(window, workspace, monitor) {
