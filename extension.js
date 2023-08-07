@@ -137,10 +137,6 @@ class Extension {
             }
             if(size_changed) {
                 tiling.tile_workspace_windows(window.get_workspace(), window, null, true);
-                clearTimeout(event_timeout);
-                event_timeout = setTimeout(() => {
-                    tile_window_workspace(window); // Fully sort workspace after a time
-                }, 1000);
                 size_changed = false;
             }
         }
@@ -150,7 +146,7 @@ class Extension {
         // tile_window_workspace(window);
     }
     grab_op_end_handler(_, window, grabpo) {
-        if( (grabpo === 1 || grabpo === 1025) &&
+        if( (grabpo === 1 || grabpo === 1025) && // When a window has moved
             !(window.maximized_horizontally === true && window.maximized_vertically === true))
             tiling.tile_workspace_windows(window.get_workspace(), window, null, true);
         if(grabpo === 25601) // When released from resizing
