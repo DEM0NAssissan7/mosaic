@@ -37,7 +37,7 @@ function get_monitor_workspace_windows(workspace, monitor) {
     let _windows = [];
     let windows = workspace.list_windows();
     for(let window of windows)
-        if(window.get_monitor() === monitor)
+        if(window.get_monitor() === monitor && !is_excluded(window))
             _windows.push(window);
     return _windows;
 }
