@@ -25,6 +25,7 @@ const snapping = extension.imports.snapping;
 
 let wm_eventids = [];
 let display_eventids = [];
+let workspace_man_eventids = [];
 let maximized_windows = [];
 
 let workspace_manager = global.workspace_manager;
@@ -152,6 +153,13 @@ class Extension {
         if( (grabpo === 1 || grabpo === 1025) &&
             !(window.maximized_horizontally === true && window.maximized_vertically === true))
             tiling.tile_workspace_windows(window.get_workspace(), window, null, true);
+        if(grabpo === 25601) // When released from resizing
+            tile_window_workspace(window);
+    }
+
+    workspace_created_handler(_, index) {
+        // console.log(index);
+        // tiling.append_workspace(index);
     }
 
     enable() {
@@ -162,6 +170,7 @@ class Extension {
         wm_eventids.push(global.window_manager.connect('destroy', this.destroyed_handler));
         display_eventids.push(global.display.connect("grab-op-begin", this.grab_op_begin_handler));
         display_eventids.push(global.display.connect("grab-op-end", this.grab_op_end_handler));
+        workspace_man_eventids.push(global.workspace_manager.connect('workspace-added', this.workspace_created_handler));
         // wm_eventids.push(global.window_manager.connect('switch-workspace', this.switch_workspace_handler));
 
         // Sort all workspaces at startup
@@ -175,6 +184,8 @@ class Extension {
             global.window_manager.disconnect(eventid);
         for(let eventid of display_eventids)
             global.display.disconnect(eventid);
+        for(let eventid of workspace_man_eventids)
+            global.workspace_manager.disconnect(eventid);
         snapping.clear_actors();
     }
 }
