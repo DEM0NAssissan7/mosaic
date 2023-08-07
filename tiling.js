@@ -24,16 +24,20 @@ class window_descriptor{
     }
 }
 
+function create_descriptor(meta_window, monitor, index) {
+    if( windowing.is_excluded(meta_window) ||
+        meta_window.get_monitor() !== monitor ||
+        (meta_window.maximized_horizontally && meta_window.maximized_horizontally))
+        return false;
+    return new window_descriptor(meta_window, index);
+}
+
 function windows_to_descriptors(meta_windows, monitor) {
     let descriptors = [];
     for(let i = 0; i < meta_windows.length; i++) {
-        let meta_window = meta_windows[i];
-        // Exclusion clause: windows we do not want to tile
-        if( windowing.is_excluded(meta_window) ||
-            meta_window.get_monitor() !== monitor ||
-            (meta_window.maximized_horizontally && meta_window.maximized_horizontally))
-            continue;
-        descriptors.push(new window_descriptor(meta_window, i));
+        let descriptor = create_descriptor(meta_windows[i], monitor, i);
+        if(descriptor)
+            descriptors.push(descriptor);
     }
     return descriptors;
 }
