@@ -69,8 +69,8 @@ function win_to_new_workspace(window, switch_to_new, _monitor) {
     tiling.tile_workspace_windows(window_workspace, false, monitor, false); // Tile the workspace where the window came from
     if(switch_to_new)
         workspace.activate(get_timestamp()); // Switch to new workspace if specified
-    // window.move_to_monitor(monitor); // Move to proper monitor
-    tiling.tile_workspace_windows(workspace, window, false, true); // Tile new workspace for window
+    window.move_to_monitor(monitor); // Move to proper monitor
+    tiling.tile_workspace_windows(workspace, window, null, true); // Tile new workspace for window
     return workspace; // Return new workspace
 }
 
