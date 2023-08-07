@@ -38,10 +38,6 @@ function windows_to_descriptors(meta_windows, monitor) {
     return descriptors;
 }
 
-function sort_algorithm(windows) {
-
-}
-
 function Level(work_area) {
     this.x = 0;
     this.y = 0;
