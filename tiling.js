@@ -2,13 +2,6 @@ const extension = imports.misc.extensionUtils.getCurrentExtension();
 const enums = extension.imports.enums;
 const windowing = extension.imports.windowing;
 
-var total_width = 0;
-var total_height = 0;
-var max_width = 0;
-var max_height = 0;
-
-var added_windows = [];
-
 class window_descriptor{
     constructor(meta_window, index) {
         let frame = meta_window.get_frame_rect();
@@ -20,172 +13,16 @@ class window_descriptor{
         this.height = frame.height;
         this.maximized_horizontally = meta_window.maximized_horizontally;
         this.maximized_vertically = meta_window.maximized_vertically;
-        this.right_child = false;
-        this.under_child = false;
     }
-    check_fit_right(window) {
-        let child_x = this.x + this.width + enums.window_spacing;
-        if(check_collision(child_x, this.y, window.width, window.height))
-            return false;
-        if(child_x + window.width > max_width)
-            return false;
-        return true;
-    }
-    check_fit_under(window) {
-        let child_y = this.y + this.height + enums.window_spacing;
-        if(check_collision(this.x, child_y, window.width, window.height))
-            return false;
-        if(child_y + window.height > max_height)
-            return false;
-        return true;
-    }
-    check_possible_fit(window) {
-        if(!this.check_fit_right(window) && !this.check_fit_under(window))
-            return false;
-        return true;
-    }
-    get_area_right(window) {
-        let new_width = Math.max(this.x + this.width + enums.window_spacing + window.width, total_width);
-        return new_width - total_width; // Make the windows as close to the display ratio as possible. Looks nice :)
-    }
-    get_area_under(window) {
-        let new_height = Math.max(this.y + this.height + enums.window_spacing + window.height, total_height);
-        return new_height - total_height;
-    }
-    draw_window(meta_windows, x_offset, y_offset) {
+    draw(meta_windows, x, y) {
         windowing.move_window(meta_windows[this.index],
                             false,
-                            this.x + x_offset,
-                            this.y + y_offset,
+                            x,
+                            y,
                             this.width,
                             this.height);
-        if(this.right_child)
-            this.right_child.draw_window(meta_windows, x_offset, y_offset);
-        if(this.under_child)
-            this.under_child.draw_window(meta_windows, x_offset, y_offset);
-    }
-    add_right_child(window) {
-        total_width = Math.max(this.x + this.width + enums.window_spacing + window.width, total_width);
-        window.x = this.x + this.width + enums.window_spacing;
-        window.y = this.y;
-        this.right_child = window;
-    }
-    add_under_child(window) {
-        total_height = Math.max(this.y + this.height + enums.window_spacing + window.height, total_height);
-        window.x = this.x;
-        window.y = this.y + this.height + enums.window_spacing;
-        this.under_child = window;
-    }
-    get_optimal_handler(child_window) {
-        let handler = null;
-        let area = Infinity;
-
-        if(child_window.index === this.index) {
-            return {
-                area: area,
-                handler: handler
-            };
-        }
-
-        let optimal;
-        // Check the right space
-        if(!this.right_child) {
-            if(this.check_fit_right(child_window)) {
-                area = this.get_area_right(child_window);
-                handler = window => this.add_right_child(window);
-            }
-        } else
-            optimal = this.right_child.get_optimal_handler(child_window); // Get right space optimal if there is already a right child
-
-        // Check under space
-        if(!this.under_child) { // If there is space under
-            if(this.check_fit_under(child_window)) {
-                let area_under = this.get_area_under(child_window);
-                if(area_under < area || handler === null) { // If the area under is less than the area on the right
-                    area = area_under;
-                    handler = window => this.add_under_child(window);
-                }
-            }
-        } else { // If there is a child
-            let _optimal = this.under_child.get_optimal_handler(child_window); // Get the under optimal
-            // Compare it to right space optimal
-            if(_optimal) {
-                if(!optimal)
-                    optimal = _optimal;
-                else if(_optimal.area < optimal.area)
-                    optimal = _optimal;
-            }
-        }
-
-        // Check to see if the best optimal is better than the best local area calculation
-        if(optimal) {
-            if(optimal.area < area) {
-                area = optimal.area;
-                handler = optimal.handler;
-            }
-        }
-
-        return {
-            area: area,
-            handler: handler
-        };
     }
 }
-
-function check_collision(x, y, width, height) {
-    for(let window of added_windows) {
-        if(window.x < x + width &&
-            window.x + window.width > x &&
-            window.y < y + height &&
-            window.y + window.height > y
-        )
-            return true;
-    }
-    return false;
-}
-
-function advanced_sort(_windows) {
-    let output_windows = [];
-    let windows = _windows;
-    let vertical = true;
-    while(windows.length > 0) {
-        let window;
-        let index;
-        let max = 0;
-        if(vertical) {
-            // Get tallest unused window
-            for(let i = 0; i < windows.length; i++) {
-                let _window = windows[i];
-                if(_window.height > max || !max) {
-                    max = _window.height;
-                    index = i;
-                    window = _window;
-                }
-            }
-            vertical = false;
-        } else {
-            // Get longest unused window
-            for(let i = 0; i < windows.length; i++) {
-                let _window = windows[i];
-                if(_window.width > max || !max) {
-                    max = _window.width;
-                    index = i;
-                    window = _window;
-                }
-            }
-            vertical = true;
-        }
-        output_windows.push(window);
-        windows.splice(index, 1);
-    }
-    return output_windows;
-}
-
-// let sort_algorithm = advanced_sort;
-// let sort_algorithm = windows => windows.sort((a, b) => b.width * b.height - a.width * a.height);
-// let sort_algorithm = windows => windows.sort((a, b) => b.height - a.height);
-let sort_algorithm = windows => windows;
-// let sort_algorithm = advanced_sort;
 
 function windows_to_descriptors(meta_windows, monitor) {
     let descriptors = [];
@@ -203,36 +40,111 @@ function windows_to_descriptors(meta_windows, monitor) {
     return descriptors;
 }
 
-function get_tiled_window(_windows, work_area) {
-    let retval = {
-        window: null,
-        overflow: false
-    }
-    if(_windows.length === 0)
-        return retval;
+function sort_algorithm(windows) {
 
-    let windows = sort_algorithm(_windows); // Sort through windows
-    let root_window = windows[0];
-    retval.window = root_window;
-    
-    added_windows = [root_window];
-    max_width = work_area.width;
-    max_height = work_area.height;
-    total_width = root_window.width;
-    total_height = root_window.height;
-    for(let i = 1; i < windows.length; i++) {
-        let window = windows[i];
-        let optimal = root_window.get_optimal_handler(window);
-        if(optimal.area === Infinity) {
-            retval.overflow = true;
-            continue;
-        }
-        if(optimal.handler) {
-            optimal.handler(window);
-        added_windows.push(window);
-        }
+}
+
+function Level(work_area) {
+    this.x = 0;
+    this.y = 0;
+    this.width = 0;
+    this.height = 0;
+    this.windows = [];
+    this.work_area = work_area;
+}
+
+Level.prototype.draw_horizontal = function(meta_windows, y) {
+    let x = this.x;
+    for(let window of this.windows) {
+        window.draw(meta_windows, x, y);
+        x += window.width + enums.window_spacing;
     }
-    return retval;
+}
+
+function tile(windows, work_area) {
+    let vertical = false;
+    {
+        let width = 0;
+        let height = 0;
+        for(let window of windows) {
+            width = Math.max(window.width, width);
+            height = Math.max(window.height, height);
+        }
+        // if(width < height)
+        //     vertical = true;
+    }
+    let levels = [new Level(work_area)];
+    let total_width = 0;
+    let total_height = 0;
+    let x, y;
+    if(!vertical) { // If the mode is going to be horizontal
+        let window_widths = 0;
+        windows.map(w => window_widths += w.width + enums.window_spacing)
+        window_widths -= enums.window_spacing;
+
+        let n_levels = Math.round(window_widths / work_area.width) + 1;
+        let avg_level_width = window_widths / n_levels;
+        let level = levels[0];
+        let level_index = 0;
+        
+        for(let window of windows) { // Add windows to levels
+            if(level.width > avg_level_width) { // Create a new level
+                total_width = Math.max(level.width, total_width);
+                total_height += level.height + enums.window_spacing;
+                level.x = (work_area.width - level.width) / 2 + work_area.x;
+                levels.push(new Level(work_area));
+                level_index++;
+                level = levels[level_index];
+            }
+            level.windows.push(window);
+            if(level.width !== 0)
+                level.width += enums.window_spacing;
+            level.width += window.width;
+            level.height = Math.max(window.height, level.height);
+        }
+        total_width = Math.max(level.width, total_width);
+        total_height += level.height;
+        level.x = (work_area.width - level.width) / 2 + work_area.x;
+
+        y = (work_area.height - total_height) / 2 + work_area.y;
+    } else {
+        let window_heights = 0;
+        windows.map(w => window_heights += w.height + enums.window_spacing)
+        window_heights -= enums.window_spacing;
+
+        let n_levels = Math.floor(window_heights / work_area.height) + 1;
+        let avg_level_height = window_heights / n_levels;
+        let level = levels[0];
+        let level_index = 0;
+        
+        for(let window of windows) { // Add windows to levels
+            if(level.width > avg_level_height) { // Create a new level
+                total_width = Math.max(level.width, total_width);
+                total_height += level.height + enums.window_spacing;
+                level.x = (work_area.width - level.width) / 2 + work_area.x;
+                levels.push(new Level(work_area));
+                level_index++;
+                level = levels[level_index];
+            }
+            level.windows.push(window);
+            if(level.width !== 0)
+                level.width += enums.window_spacing;
+            level.width += window.width;
+            level.height = Math.max(window.height, level.height);
+        }
+        total_width = Math.max(level.width, total_width);
+        total_height += level.height;
+        level.x = (work_area.width - level.width) / 2 + work_area.x;
+
+        y = (work_area.height - total_height) / 2 + work_area.y;
+    }
+    return {
+        x: x,
+        y: y,
+        overflow: (total_width > work_area.width || total_height > work_area.height),
+        vertical: vertical,
+        levels: levels
+    }
 }
 
 function get_working_info(workspace, window, monitor) {
@@ -261,6 +173,25 @@ function get_working_info(workspace, window, monitor) {
     }
 }
 
+function draw_tile(tile_info, meta_windows) {
+    let levels = tile_info.levels;
+    let _x = tile_info.x;
+    let _y = tile_info.y;
+    if(!tile_info.vertical) { // Horizontal tiling
+        let y = _y;
+        for(let level of levels) {
+            level.draw_horizontal(meta_windows, y);
+            y += level.height + enums.window_spacing;
+        }
+    } else { // Vertical
+        let x = _x;
+        for(let level of levels) {
+            level.draw_vertical(meta_windows, x);
+            x += level.width + enums.window_spacing;
+        }
+    }
+}
+
 function tile_workspace_windows(workspace, reference_meta_window, monitor, keep_oversized_windows) {
     let working_info = get_working_info(workspace, reference_meta_window, monitor);
     if(!working_info) return;
@@ -268,9 +199,8 @@ function tile_workspace_windows(workspace, reference_meta_window, monitor, keep_
     let windows = working_info.windows;
     let work_area = working_info.work_area;
 
-    let tiled_window = get_tiled_window(windows, work_area);
-    if(tiled_window.overflow && !keep_oversized_windows && reference_meta_window) {
-        // If the window cannot fit, get rid of the new window and redo the tile
+    let tile_info = tile(windows, work_area);
+    if(tile_info.overflow && !keep_oversized_windows && reference_meta_window) { // Overflow clause
         let id = reference_meta_window.get_id();
         let _windows = windows;
         for(let i = 0; i < _windows.length; i++) {
@@ -280,19 +210,16 @@ function tile_workspace_windows(workspace, reference_meta_window, monitor, keep_
             }
         }
         windowing.move_oversized_window(reference_meta_window);
-        tiled_window = get_tiled_window(_windows, work_area);
+        tile_info = tile(_windows, work_area);
     }
-    let x = (max_width - total_width) / 2 + work_area.x; // Get where the window should be placed
-    let y = (max_height - total_height) / 2 + work_area.y;
-    tiled_window.window.draw_window(meta_windows, x, y); // Draw windows
+    draw_tile(tile_info, meta_windows);
 }
 
 function test_window_fit(window, workspace, monitor) {
     let working_info = get_working_info(workspace, window, monitor);
-    if(!working_info) return;
+    if(!working_info) return false;
     let windows = working_info.windows;
-    let work_area = working_info.work_area;
     windows.push(new window_descriptor(window, windows.length));
 
-    return !(get_tiled_window(windows, work_area).overflow);
+    return !(get_tiled_window(windows, working_info.work_area).overflow);
 }
