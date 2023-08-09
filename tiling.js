@@ -161,16 +161,16 @@ function tile(windows, work_area) {
 function get_working_info(workspace, window, monitor) {
     if(!workspace) // Failsafe for undefined workspace
         return false;
-    let meta_windows = workspace.list_windows();
-    if(meta_windows.length === 0)
-        return false;
 
     let current_monitor = null;
     if(window)
         current_monitor = window.get_monitor();
     else
         current_monitor = monitor;
-    if(current_monitor === null || current_monitor === false) return false;
+    if(current_monitor === null || current_monitor === false)
+        return false;
+
+    let meta_windows = windowing.get_monitor_workspace_windows(workspace, current_monitor);
 
     // Put needed window info into an enum so it can be transferred between arrays
     let windows = windows_to_descriptors(meta_windows, current_monitor);
