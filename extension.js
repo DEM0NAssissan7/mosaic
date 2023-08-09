@@ -61,10 +61,11 @@ class Extension {
 
     created_handler(_, window) {
         if(windowing.is_related(window)) {
+            setTimeout(() => {
         if(!tiling.test_window_fit(window, window.get_workspace(), window.get_monitor()))
             windowing.move_oversized_window(window);
-        setTimeout(() => {
             tile_window_workspace(window);
+            }, 60);
         }
     }
 
