@@ -71,7 +71,6 @@ class Extension {
 
     destroyed_handler(_, win) {
         let window = win.meta_window;
-        if(windowing.is_related(window)) {
             let workspace = window.get_workspace();
             let previous_workspace = workspace.get_neighbor(-3);
         let monitor = window.get_monitor();
@@ -94,7 +93,6 @@ class Extension {
                 return;
             }
             tile_window_workspace(window);
-        }
     }
     
     switch_workspace_handler(_, win) {
