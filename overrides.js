@@ -1,31 +1,17 @@
-var workspaces = [];
-var overrides = [];
-
 function create_override(workspace, victim_descriptor, replacement_descriptor) {
-    let workspace_index = workspace.index();
-    if(!workspaces[workspace_index])
-        workspaces[workspace_index] = [];
-    workspaces[workspace_index][victim_descriptor.index] = replacement_descriptor;
-    workspaces[workspace_index][replacement_descriptor.index] = victim_descriptor;
+    if(!workspace.overrides)
+        workspace.overrides = [];
+    workspace.overrides[victim_descriptor.index] = replacement_descriptor;
+    workspace.overrides[replacement_descriptor.index] = victim_descriptor;
 }
 
 function get_override(workspace, descriptor) {
-    let workspace_index = workspace.index();
-    let managed_workspace = workspaces[workspace_index];
-    if(!managed_workspace)
+    if(!workspace.overrides)
         return descriptor;
     else {
-        let replacement = managed_workspace[descriptor.index];
+        let replacement = workspace.overrides[descriptor.index];
         if(replacement)
             return replacement; 
     }
     return descriptor;
-}
-
-function remove_workspace(index) {
-    workspaces.splice(index, 1);
-}
-
-function append_workspace(index) {
-    workspaces.splice(index, 0, []);
 }
