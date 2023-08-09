@@ -62,9 +62,9 @@ class Extension {
     created_handler(_, window) {
         if(windowing.is_related(window)) {
             setTimeout(() => {
-        if(!tiling.test_window_fit(window, window.get_workspace(), window.get_monitor()))
-            windowing.move_oversized_window(window);
-            tile_window_workspace(window);
+                if(!tiling.test_window_fit(window, window.get_workspace(), window.get_monitor()))
+                    windowing.move_oversized_window(window);
+                tile_window_workspace(window);
             }, 60);
         }
     }
@@ -72,82 +72,86 @@ class Extension {
     destroyed_handler(_, win) {
         let window = win.meta_window;
         if(windowing.is_related(window)) {
-        let workspace = window.get_workspace();
-        let previous_workspace = workspace.get_neighbor(-3);
-        if(!workspace || !previous_workspace) return;
-
-        if(previous_workspace === 1 || previous_workspace.index() === workspace.index()) {
-            previous_workspace = workspace.get_neighbor(-4); // The new workspace will be the one on the right instead.
-            // Recheck to see if it is still a problematic workspace
-            if( previous_workspace === 1 ||
-                previous_workspace.index() === workspace.index() ||
-                previous_workspace.index() === global.workspace_manager.get_n_workspaces() - 1)
+            let workspace = window.get_workspace();
+            let previous_workspace = workspace.get_neighbor(-3);
+            if(!workspace || !previous_workspace) return;
+    
+            if(previous_workspace === 1 || previous_workspace.index() === workspace.index()) {
+                previous_workspace = workspace.get_neighbor(-4); // The new workspace will be the one on the right instead.
+                // Recheck to see if it is still a problematic workspace
+                if( previous_workspace === 1 ||
+                    previous_workspace.index() === workspace.index() ||
+                    previous_workspace.index() === global.workspace_manager.get_n_workspaces() - 1)
+                    return;
+            }
+            
+            if( windowing.get_monitor_workspace_windows(workspace, window.get_monitor()).length === 0 &&
+                windowing.get_monitor_workspace_windows(previous_workspace, window.get_monitor()).length !== 0 &&
+                workspace.index() !== workspace_manager.get_n_workspaces() - 1
+                )
+            {
+                previous_workspace.activate(windowing.get_timestamp());
+                tiling.tile_workspace_windows(previous_workspace, false, window.get_monitor());
                 return;
+            }
+            tile_window_workspace(window);
         }
-        
-        if( windowing.get_monitor_workspace_windows(workspace, window.get_monitor()).length === 0 &&
-            windowing.get_monitor_workspace_windows(previous_workspace, window.get_monitor()).length !== 0 &&
-            workspace.index() !== workspace_manager.get_n_workspaces() - 1
-            )
-        {
-            previous_workspace.activate(windowing.get_timestamp());
-            tiling.tile_workspace_windows(previous_workspace, false, window.get_monitor());
-            return;
-        }
-        tile_window_workspace(window);
-    }
     }
     
     switch_workspace_handler(_, win) {
         tile_window_workspace(win.meta_window); // Tile when switching to a workspace. Helps to create a more cohesive experience.
     }
 
-    size_changed_handler(_, win) {
-        if(!size_changed) {
-            // Deal with maximizing to a new workspace and vice versa
-            let window = win.meta_window;
+    size_change_handler(_, win, mode) {
+        let window = win.meta_window;
         if(windowing.is_related(window)) {
             let id = window.get_id();
             let workspace = window.get_workspace();
-            size_changed = true;
-            
             let monitor = window.get_monitor();
-            if(window.maximized_horizontally === true && window.maximized_vertically === true && windowing.get_all_workspace_windows(monitor).length !== 1) {
-                clearTimeout(expanded_window_timeout);
-                expanded_window_timeout = setTimeout(() => {
-                    // If maximized (and not alone), move to new workspace and activate it if it is on the active workspace
-                    let new_workspace = windowing.move_oversized_window(window);
-                    /* We mark the window as activated by using its id to index an array
-                        We put the value as the active workspace index so that if the workspace anatomy
-                        of the current workspace changes, it does not move the maximized window to an unrelated
-                        window.
-                    */
-                    maximized_windows[id] = {
-                        workspace: new_workspace.index(),
-                        monitor: monitor
-                    }; // Mark window as maximized
-                    tiling.tile_workspace_windows(workspace, false, monitor, false); // Sort the workspace where the window came from
-                }, 30);
-                size_changed = false;
-                return;
-            } else if(
-            (window.maximized_horizontally === false ||
-            window.maximized_vertically === false) && // If window is not maximized
-            maximized_windows[id] &&
-            windowing.get_all_workspace_windows(monitor).length === 1// If the workspace anatomy has not changed
-            ) {
-                if( maximized_windows[id].workspace === workspace.index() &&
-                    maximized_windows[id].monitor === monitor
+
+            if(mode === 2 || mode === 0) { // If the window was maximized
+                if(window.maximized_horizontally === true && window.maximized_vertically === true && windowing.get_all_workspace_windows(monitor).length !== 1) {
+                    clearTimeout(expanded_window_timeout);
+                    expanded_window_timeout = setTimeout(() => {
+                        // If maximized (and not alone), move to new workspace and activate it if it is on the active workspace
+                        let new_workspace = windowing.move_oversized_window(window);
+                        /* We mark the window as activated by using its id to index an array
+                            We put the value as the active workspace index so that if the workspace anatomy
+                            of the current workspace changes, it does not move the maximized window to an unrelated
+                            window.
+                        */
+                        maximized_windows[id] = {
+                            workspace: new_workspace.index(),
+                            monitor: monitor
+                        }; // Mark window as maximized
+                        tiling.tile_workspace_windows(workspace, false, monitor, false); // Sort the workspace where the window came from
+                    }, 30);
+                }
+            } else if(mode === 3 || mode === 1) { // If the window was unmaximized
+                if( (window.maximized_horizontally === false ||
+                    window.maximized_vertically === false) && // If window is not maximized
+                    maximized_windows[id] &&
+                    windowing.get_all_workspace_windows(monitor).length === 1// If the workspace anatomy has not changed
                 ) {
-                    maximized_windows[id] = false;
-                    windowing.move_back_window(window); // Move the window back to its workspace
-                    tile_window_workspace(window);
+                    if( maximized_windows[id].workspace === workspace.index() &&
+                        maximized_windows[id].monitor === monitor
+                    ) {
+                        maximized_windows[id] = false;
+                        windowing.move_back_window(window); // Move the window back to its workspace
+                        tile_window_workspace(window);
+                    }
                 }
             }
         }
-                tiling.tile_workspace_windows(window.get_workspace(), window, null, true);
-                size_changed = false;
-            }
+    }
+
+    size_changed_handler(_, win) {
+        let window = win.meta_window;
+        if(!size_changed && windowing.is_related(window)) {
+            // Live resizing
+            size_changed = true;
+            tiling.tile_workspace_windows(window.get_workspace(), window, null, true);
+            size_changed = false;
         }
     }
 
@@ -156,11 +160,11 @@ class Extension {
     }
     grab_op_end_handler(_, window, grabpo) {
         if(windowing.is_related(window)) {
-        if( (grabpo === 1 || grabpo === 1025) && // When a window has moved
-            !(window.maximized_horizontally === true && window.maximized_vertically === true))
-            tiling.tile_workspace_windows(window.get_workspace(), window, null, true);
-        if(grabpo === 25601) // When released from resizing
-            tile_window_workspace(window);
+            if( (grabpo === 1 || grabpo === 1025) && // When a window has moved
+                !(window.maximized_horizontally === true && window.maximized_vertically === true))
+                tiling.tile_workspace_windows(window.get_workspace(), window, null, true);
+            if(grabpo === 25601) // When released from resizing
+                tile_window_workspace(window);
         }
     }
 
@@ -172,6 +176,7 @@ class Extension {
     enable() {
         console.log("[MOSAIC]: Starting Mosaic layout manager.");
         
+        wm_eventids.push(global.window_manager.connect('size-change', this.size_change_handler));
         wm_eventids.push(global.window_manager.connect('size-changed', this.size_changed_handler));
         display_eventids.push(global.display.connect('window-created', this.created_handler));
         wm_eventids.push(global.window_manager.connect('destroy', this.destroyed_handler));
