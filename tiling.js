@@ -1,6 +1,7 @@
 const extension = imports.misc.extensionUtils.getCurrentExtension();
 const enums = extension.imports.enums;
 const windowing = extension.imports.windowing;
+const overrides = extension.imports.overrides;
 
 class window_descriptor{
     constructor(meta_window, index) {
@@ -173,8 +174,12 @@ function get_working_info(workspace, window, monitor) {
     let meta_windows = windowing.get_monitor_workspace_windows(workspace, current_monitor);
 
     // Put needed window info into an enum so it can be transferred between arrays
-    let windows = windows_to_descriptors(meta_windows, current_monitor);
-    if(windows.length === 0) return false;
+    let _windows = windows_to_descriptors(meta_windows, current_monitor);
+    // Apply window layout overrides
+    let windows = [];
+    for(let window of _windows)
+        windows.push(overrides.get_override(workspace, window));
+
     let work_area = workspace.get_work_area_for_monitor(current_monitor); // Get working area for current space
     if(!work_area) return false;
 
