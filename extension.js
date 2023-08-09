@@ -115,7 +115,7 @@ class Extension {
             let monitor = window.get_monitor();
 
             if(mode === 2 || mode === 0) { // If the window was maximized
-                if(window.maximized_horizontally === true && window.maximized_vertically === true && windowing.get_all_workspace_windows(monitor).length !== 1) {
+                if(window.maximized_horizontally === true && window.maximized_vertically === true && windowing.get_all_workspace_windows(monitor).length > 1) {
                     clearTimeout(expanded_window_timeout);
                     expanded_window_timeout = setTimeout(() => {
                         // If maximized (and not alone), move to new workspace and activate it if it is on the active workspace
