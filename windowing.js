@@ -25,8 +25,8 @@ function get_focused_window() {
     }
 }
 
-function get_all_workspace_windows(monitor) {
-    return get_monitor_workspace_windows(get_workspace(), monitor);
+function get_all_workspace_windows(monitor, allow_unrelated) {
+    return get_monitor_workspace_windows(get_workspace(), monitor, allow_unrelated);
 }
 
 function move_window(window, ignore_top_bar, x, y, w, h) {
