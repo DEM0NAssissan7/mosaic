@@ -61,7 +61,7 @@ class Extension {
 
     created_handler(_, window) {
 
-        let created_tiler = window => {
+        let created_tiler = () => {
             if(!tiling.test_window_fit(window, window.get_workspace(), window.get_monitor()))
                 windowing.move_oversized_window(window);
             tile_window_workspace(window);
