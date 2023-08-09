@@ -65,7 +65,7 @@ class Extension {
                 if(!tiling.window_fits(window, window.get_workspace(), window.get_monitor()))
                     windowing.move_oversized_window(window);
                 tile_window_workspace(window);
-            }, 10);
+            }, 100);
         }
     }
 
