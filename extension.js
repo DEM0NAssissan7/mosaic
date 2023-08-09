@@ -174,7 +174,6 @@ class Extension {
     }
 
     workspace_created_handler(_, index) {
-        // console.log(index);
         // tiling.append_workspace(index);
     }
 
@@ -187,7 +186,7 @@ class Extension {
         wm_eventids.push(global.window_manager.connect('destroy', this.destroyed_handler));
         display_eventids.push(global.display.connect("grab-op-begin", this.grab_op_begin_handler));
         display_eventids.push(global.display.connect("grab-op-end", this.grab_op_end_handler));
-        workspace_man_eventids.push(global.workspace_manager.connect('workspace-added', this.workspace_created_handler));
+        // workspace_man_eventids.push(global.workspace_manager.connect('workspace-added', this.workspace_created_handler));
         // wm_eventids.push(global.window_manager.connect('switch-workspace', this.switch_workspace_handler));
 
         // Sort all workspaces at startup
