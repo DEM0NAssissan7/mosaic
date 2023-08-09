@@ -68,7 +68,7 @@ class Extension {
     created_handler(_, window) {
         if(windowing.is_related(window)) {
             if(window.get_monitor() !== null)
-                this.created_tiler()
+                this.created_tiler();
             else
                 setTimeout(this.created_tiler, 60);
         }
