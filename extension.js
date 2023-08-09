@@ -59,18 +59,18 @@ class Extension {
         }
     }
 
-    created_tiler(window) {
-        if(!tiling.test_window_fit(window, window.get_workspace(), window.get_monitor()))
-            windowing.move_oversized_window(window);
-        tile_window_workspace(window);
-    }
-
     created_handler(_, window) {
+
+        let created_tiler = window => {
+            if(!tiling.test_window_fit(window, window.get_workspace(), window.get_monitor()))
+                windowing.move_oversized_window(window);
+            tile_window_workspace(window);
+        }
         if(windowing.is_related(window)) {
             if(window.get_monitor() !== null)
-                this.created_tiler();
+                created_tiler();
             else
-                setTimeout(this.created_tiler, 60);
+                setTimeout(created_tiler, 60);
         }
     }
 
