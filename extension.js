@@ -55,7 +55,7 @@ class Extension {
             // Recurse all monitors
             let n_monitors = global.display.get_n_monitors();
             for(let j = 0; j < n_monitors; j++)
-                tiling.tile_workspace_windows(workspace, false, j, false);
+                tiling.tile_workspace_windows(workspace, false, j, true);
         }
     }
 
