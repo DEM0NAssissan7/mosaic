@@ -176,6 +176,7 @@ function get_working_info(workspace, window, monitor) {
     let windows = windows_to_descriptors(meta_windows, current_monitor);
     if(windows.length === 0) return false;
     let work_area = workspace.get_work_area_for_monitor(current_monitor); // Get working area for current space
+    if(!work_area) return false;
 
     return {
         monitor: current_monitor,
