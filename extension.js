@@ -60,9 +60,13 @@ class Extension {
     }
 
     created_handler(_, window) {
-        setTimeout(() => {
-            tile_window_workspace(window);
-        }, 100);
+        let clock = function() {
+            if(window.get_monitor() !== null && window.title)
+                tile_window_workspace(window);
+            else
+                setTimeout(clock, 100);
+        }
+        clock();
     }
 
     destroyed_handler(_, win) {
