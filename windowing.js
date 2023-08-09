@@ -125,8 +125,7 @@ function is_excluded(meta_window) {
 function is_related(meta_window) {
     if( !meta_window.is_hidden() &&
         !meta_window.is_attached_dialog() &&
-        meta_window.window_type === 0 &&
-        !meta_window.is_always_on_all_workspaces()
+        meta_window.window_type === 0
     ) return true;
     return false;
 }
