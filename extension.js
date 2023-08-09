@@ -77,9 +77,16 @@ class Extension {
         let workspace = window.get_workspace();
         let previous_workspace = workspace.get_neighbor(-3);
         let monitor = window.get_monitor();
-        if(!workspace || !previous_workspace) return;
 
-        if(previous_workspace === 1 || previous_workspace.index() === workspace.index()) {
+        setTimeout(() => {
+            console.log(workspace, monitor);
+            tiling.tile_workspace_windows(windowing.get_workspace(), 
+                global.display.get_focus_window(),
+                null,
+                true);
+        }, 100);
+
+        if(previous_workspace === 1 || previous_workspace.index() === workspace.index() || !previous_workspace) {
             previous_workspace = workspace.get_neighbor(-4); // The new workspace will be the one on the right instead.
             // Recheck to see if it is still a problematic workspace
             if( previous_workspace === 1 ||
@@ -95,7 +102,6 @@ class Extension {
             tiling.tile_workspace_windows(previous_workspace, false, monitor);
             return;
         }
-        tile_window_workspace(window);
     }
     
     switch_workspace_handler(_, win) {
