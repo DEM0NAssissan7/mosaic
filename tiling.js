@@ -223,16 +223,17 @@ function draw_tile(tile_info, work_area, meta_windows) {
     }
 }
 
-function tile_workspace_windows(workspace, reference_meta_window, monitor, keep_oversized_windows) {
-    let working_info = get_working_info(workspace, reference_meta_window, monitor);
+function tile_workspace_windows(workspace, reference_meta_window, _monitor, keep_oversized_windows) {
+    let working_info = get_working_info(workspace, reference_meta_window, _monitor);
     if(!working_info) return;
     let meta_windows = working_info.meta_windows;
     let windows = working_info.windows;
     let work_area = working_info.work_area;
+    let monitor = working_info.monitor;
 
     let tile_info = tile(windows, work_area);
     let overflow = tile_info.overflow;
-    for(let window of workspace.list_windows())
+    for(let window of windowing.get_monitor_workspace_windows(workspace, monitor))
         if(window.maximized_horizontally && window.maximized_vertically)
             overflow = true;
 
