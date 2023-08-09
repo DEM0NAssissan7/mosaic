@@ -33,11 +33,11 @@ function move_window(window, ignore_top_bar, x, y, w, h) {
     window.move_resize_frame(ignore_top_bar, x, y, w, h);
 }
 
-function get_monitor_workspace_windows(workspace, monitor) {
+function get_monitor_workspace_windows(workspace, monitor, allow_unrelated) {
     let _windows = [];
     let windows = workspace.list_windows();
     for(let window of windows)
-        if(window.get_monitor() === monitor && is_related(window))
+        if(window.get_monitor() === monitor && (is_related(window) || allow_unrelated))
             _windows.push(window);
     return _windows;
 }
@@ -56,7 +56,7 @@ function win_to_new_workspace(window, switch_to_new, _monitor) {
     if(!adjacent_workspace || adjacent_workspace === 1) {
         console.warn("Could not get right neighbor for workspace " + window_workspace.index());
         workspace = global.workspace_manager.append_new_workspace(false, get_timestamp());
-    } else if(get_monitor_workspace_windows(adjacent_workspace, monitor).length > 0)
+    } else if(get_monitor_workspace_windows(adjacent_workspace, monitor, true).length > 0)
         workspace = global.workspace_manager.append_new_workspace(false, get_timestamp());
     else
         workspace = adjacent_workspace;
