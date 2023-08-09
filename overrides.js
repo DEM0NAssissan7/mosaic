@@ -9,6 +9,19 @@ function create_override(workspace, victim_descriptor, replacement_descriptor) {
     workspaces[workspace_index][replacement_descriptor.index] = victim_descriptor;
 }
 
+function get_override(workspace, descriptor) {
+    let workspace_index = workspace.index();
+    let managed_workspace = workspaces[workspace_index];
+    if(!managed_workspace)
+        return descriptor;
+    else {
+        let replacement = managed_workspace[descriptor.index];
+        if(replacement)
+            return replacement; 
+    }
+    return descriptor;
+}
+
 function remove_workspace(index) {
     workspaces.splice(index, 1);
 }
