@@ -60,17 +60,12 @@ class Extension {
     }
 
     created_handler(_, window) {
-
-        let created_tiler = () => {
-            if(!tiling.test_window_fit(window, window.get_workspace(), window.get_monitor()))
-                windowing.move_oversized_window(window);
-            tile_window_workspace(window);
-        }
         if(windowing.is_related(window)) {
-            if(window.get_monitor() !== null)
-                created_tiler();
-            else
-                setTimeout(created_tiler, 60);
+            setTimeout(() => {
+                if(!tiling.test_window_fit(window, window.get_workspace(), window.get_monitor()))
+                    windowing.move_oversized_window(window);
+                tile_window_workspace(window);
+            }, 150);
         }
     }
 
