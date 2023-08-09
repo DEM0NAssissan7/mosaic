@@ -78,13 +78,10 @@ class Extension {
         let previous_workspace = workspace.get_neighbor(-3);
         let monitor = window.get_monitor();
 
-        setTimeout(() => {
-            console.log(workspace, monitor);
-            tiling.tile_workspace_windows(windowing.get_workspace(), 
-                global.display.get_focus_window(),
-                null,
-                true);
-        }, 100);
+        tiling.tile_workspace_windows(windowing.get_workspace(), 
+            global.display.get_focus_window(),
+            null,
+            true);
 
         if(previous_workspace === 1 || previous_workspace.index() === workspace.index() || !previous_workspace) {
             previous_workspace = workspace.get_neighbor(-4); // The new workspace will be the one on the right instead.
