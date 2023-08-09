@@ -237,6 +237,8 @@ function tile_workspace_windows(workspace, reference_meta_window, _monitor, keep
 function window_fits(window, workspace, monitor) {
     let working_info = get_working_info(workspace, window, monitor);
     if(!working_info) return false;
+    if(workspace.index() === window.get_workspace().index()) return true;
+
     let windows = working_info.windows;
     windows.push(new window_descriptor(window, windows.length));
 
