@@ -5,6 +5,7 @@ files=(
     "metadata.json"
     "tiling.js"
     "windowing.js"
+    "workspace-manager.js"
 )
 
 # Create temporary directory and copy files to it
