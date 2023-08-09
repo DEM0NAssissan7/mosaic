@@ -240,7 +240,7 @@ function window_fits(window, workspace, monitor) {
     let windows = working_info.windows;
     windows.push(new window_descriptor(window, windows.length));
 
-    for(let window of workspace.list_windows())
+    for(let window of working_info.meta_windows)
         if(window.maximized_horizontally && window.maximized_vertically)
             return false;
 
