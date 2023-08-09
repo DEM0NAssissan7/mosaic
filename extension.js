@@ -74,6 +74,7 @@ class Extension {
         if(windowing.is_related(window)) {
             let workspace = window.get_workspace();
             let previous_workspace = workspace.get_neighbor(-3);
+        let monitor = window.get_monitor();
             if(!workspace || !previous_workspace) return;
     
             if(previous_workspace === 1 || previous_workspace.index() === workspace.index()) {
@@ -85,13 +86,11 @@ class Extension {
                     return;
             }
             
-            if( windowing.get_monitor_workspace_windows(workspace, window.get_monitor()).length === 0 &&
-                windowing.get_monitor_workspace_windows(previous_workspace, window.get_monitor()).length !== 0 &&
-                workspace.index() !== workspace_manager.get_n_workspaces() - 1
-                )
+        if( windowing.get_monitor_workspace_windows(workspace, monitor).length === 0 &&
+            workspace.index() !== workspace_manager.get_n_workspaces() - 1)
             {
                 previous_workspace.activate(windowing.get_timestamp());
-                tiling.tile_workspace_windows(previous_workspace, false, window.get_monitor());
+            tiling.tile_workspace_windows(previous_workspace, false, monitor);
                 return;
             }
             tile_window_workspace(window);
