@@ -60,15 +60,17 @@ class Extension {
     }
 
     created_handler(_, window) {
+        if(windowing.is_related(window)) {
         if(!tiling.test_window_fit(window, window.get_workspace(), window.get_monitor()))
             windowing.move_oversized_window(window);
         setTimeout(() => {
             tile_window_workspace(window);
-        }, 100);
+        }
     }
 
     destroyed_handler(_, win) {
         let window = win.meta_window;
+        if(windowing.is_related(window)) {
         let workspace = window.get_workspace();
         let previous_workspace = workspace.get_neighbor(-3);
         if(!workspace || !previous_workspace) return;
@@ -93,6 +95,7 @@ class Extension {
         }
         tile_window_workspace(window);
     }
+    }
     
     switch_workspace_handler(_, win) {
         tile_window_workspace(win.meta_window); // Tile when switching to a workspace. Helps to create a more cohesive experience.
@@ -102,6 +105,7 @@ class Extension {
         if(!size_changed) {
             // Deal with maximizing to a new workspace and vice versa
             let window = win.meta_window;
+        if(windowing.is_related(window)) {
             let id = window.get_id();
             let workspace = window.get_workspace();
             size_changed = true;
@@ -139,7 +143,7 @@ class Extension {
                     tile_window_workspace(window);
                 }
             }
-            if(size_changed) {
+        }
                 tiling.tile_workspace_windows(window.get_workspace(), window, null, true);
                 size_changed = false;
             }
@@ -150,11 +154,13 @@ class Extension {
         // tile_window_workspace(window);
     }
     grab_op_end_handler(_, window, grabpo) {
+        if(windowing.is_related(window)) {
         if( (grabpo === 1 || grabpo === 1025) && // When a window has moved
             !(window.maximized_horizontally === true && window.maximized_vertically === true))
             tiling.tile_workspace_windows(window.get_workspace(), window, null, true);
         if(grabpo === 25601) // When released from resizing
             tile_window_workspace(window);
+        }
     }
 
     workspace_created_handler(_, index) {
