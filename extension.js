@@ -59,13 +59,18 @@ class Extension {
         }
     }
 
+    created_tiler(window) {
+        if(!tiling.test_window_fit(window, window.get_workspace(), window.get_monitor()))
+            windowing.move_oversized_window(window);
+        tile_window_workspace(window);
+    }
+
     created_handler(_, window) {
         if(windowing.is_related(window)) {
-            setTimeout(() => {
-                if(!tiling.test_window_fit(window, window.get_workspace(), window.get_monitor()))
-                    windowing.move_oversized_window(window);
-                tile_window_workspace(window);
-            }, 60);
+            if(window.get_monitor() !== null)
+                this.created_tiler()
+            else
+                setTimeout(this.created_tiler, 60);
         }
     }
 
