@@ -234,7 +234,7 @@ function tile_workspace_windows(workspace, reference_meta_window, _monitor, keep
     draw_tile(tile_info, work_area, meta_windows);
 }
 
-function test_window_fit(window, workspace, monitor) {
+function window_fits(window, workspace, monitor) {
     let working_info = get_working_info(workspace, window, monitor);
     if(!working_info) return false;
     let windows = working_info.windows;

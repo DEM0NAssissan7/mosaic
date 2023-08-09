@@ -62,7 +62,7 @@ class Extension {
     created_handler(_, window) {
         if(windowing.is_related(window)) {
             setTimeout(() => {
-                if(!tiling.test_window_fit(window, window.get_workspace(), window.get_monitor()))
+                if(!tiling.window_fits(window, window.get_workspace(), window.get_monitor()))
                     windowing.move_oversized_window(window);
                 tile_window_workspace(window);
             }, 10);
@@ -71,28 +71,28 @@ class Extension {
 
     destroyed_handler(_, win) {
         let window = win.meta_window;
-            let workspace = window.get_workspace();
-            let previous_workspace = workspace.get_neighbor(-3);
+        let workspace = window.get_workspace();
+        let previous_workspace = workspace.get_neighbor(-3);
         let monitor = window.get_monitor();
-            if(!workspace || !previous_workspace) return;
-    
-            if(previous_workspace === 1 || previous_workspace.index() === workspace.index()) {
-                previous_workspace = workspace.get_neighbor(-4); // The new workspace will be the one on the right instead.
-                // Recheck to see if it is still a problematic workspace
-                if( previous_workspace === 1 ||
-                    previous_workspace.index() === workspace.index() ||
-                    previous_workspace.index() === global.workspace_manager.get_n_workspaces() - 1)
-                    return;
-            }
-            
+        if(!workspace || !previous_workspace) return;
+
+        if(previous_workspace === 1 || previous_workspace.index() === workspace.index()) {
+            previous_workspace = workspace.get_neighbor(-4); // The new workspace will be the one on the right instead.
+            // Recheck to see if it is still a problematic workspace
+            if( previous_workspace === 1 ||
+                previous_workspace.index() === workspace.index() ||
+                previous_workspace.index() === global.workspace_manager.get_n_workspaces() - 1)
+                return;
+        }
+        
         if( windowing.get_monitor_workspace_windows(workspace, monitor).length === 0 &&
             workspace.index() !== workspace_manager.get_n_workspaces() - 1)
-            {
-                previous_workspace.activate(windowing.get_timestamp());
+        {
+            previous_workspace.activate(windowing.get_timestamp());
             tiling.tile_workspace_windows(previous_workspace, false, monitor);
-                return;
-            }
-            tile_window_workspace(window);
+            return;
+        }
+        tile_window_workspace(window);
     }
     
     switch_workspace_handler(_, win) {
@@ -118,11 +118,11 @@ class Extension {
                             window.
                         */
                         if(new_workspace) {
-                        maximized_windows[id] = {
-                            workspace: new_workspace.index(),
-                            monitor: monitor
-                        }; // Mark window as maximized
-                        tiling.tile_workspace_windows(workspace, false, monitor, false); // Sort the workspace where the window came from
+                            maximized_windows[id] = {
+                                workspace: new_workspace.index(),
+                                monitor: monitor
+                            }; // Mark window as maximized
+                            tiling.tile_workspace_windows(workspace, false, monitor, false); // Sort the workspace where the window came from
                         }
                     }, 30);
                 }
