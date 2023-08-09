@@ -52,6 +52,7 @@ function win_to_new_workspace(window, switch_to_new, _monitor) {
     let monitor = window.get_monitor();
     if(_monitor >= 0 && _monitor !== null)
         monitor = _monitor;
+    if(monitor === null) return;
     // This is to prevent an infinite workspace creation bug
     if(!adjacent_workspace || adjacent_workspace === 1) {
         console.warn("Could not get right neighbor for workspace " + window_workspace.index());

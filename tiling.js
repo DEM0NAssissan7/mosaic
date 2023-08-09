@@ -189,6 +189,7 @@ function get_working_info(workspace, window, monitor) {
         current_monitor = window.get_monitor();
     else
         current_monitor = monitor;
+    if(current_monitor === null) return;
 
     // Put needed window info into an enum so it can be transferred between arrays
     let windows = windows_to_descriptors(meta_windows, current_monitor);
