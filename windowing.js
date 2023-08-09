@@ -44,17 +44,23 @@ function get_monitor_workspace_windows(workspace, monitor, allow_unrelated) {
 
 
 function move_over_window(window, switch_to_new, _monitor) {
-    let monitor = window.get_monitor();
-    if(_monitor !== null && _monitor !== false)
-        monitor = _monitor;
-    if(monitor === null) return;
-
     let previous_workspace = window.get_workspace();
 
     let workspace = global.workspace_manager.append_new_workspace(false, get_timestamp());
 
     window.change_workspace(workspace); // Move window to new workspace
     global.workspace_manager.reorder_workspace(workspace, previous_workspace.index() + 1);
+
+    if(window.maximized_horizontally && window.maximized_vertically) { // Adjust the window positioning if it is maximized\
+        let monitor = window.get_monitor();
+        if(_monitor !== null && _monitor !== false)
+            monitor = _monitor;
+        if(monitor === null) return;
+
+        let offset = global.display.get_monitor_geometry(monitor).height - workspace.get_work_area_for_monitor(monitor).height; // Get top bar offset (if applicable)
+        let frame = window.get_frame_rect();
+        move_window(window, false, 0, offset, frame.width, frame.height - offset); // Move window to display properly
+    }
 
     if(switch_to_new)
         workspace.activate(get_timestamp()); // Switch to new workspace if specified
