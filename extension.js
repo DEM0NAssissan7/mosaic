@@ -60,11 +60,9 @@ class Extension {
     }
 
     created_handler(_, window) {
-            setTimeout(() => {
-                if(!tiling.window_fits(window, window.get_workspace(), window.get_monitor()))
-                    windowing.move_oversized_window(window);
-                tile_window_workspace(window);
-            }, 100);
+        setTimeout(() => {
+            tile_window_workspace(window);
+        }, 100);
     }
 
     destroyed_handler(_, win) {
