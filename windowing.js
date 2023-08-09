@@ -50,7 +50,7 @@ function win_to_new_workspace(window, switch_to_new, _monitor) {
     let adjacent_workspace = window_workspace.get_neighbor(-4); // Get workspace to the right
     let workspace;
     let monitor = window.get_monitor();
-    if(_monitor >= 0 && _monitor !== null)
+    if(_monitor !== null && _monitor !== false)
         monitor = _monitor;
     if(monitor === null) return;
     // This is to prevent an infinite workspace creation bug
