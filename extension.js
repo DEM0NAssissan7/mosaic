@@ -120,11 +120,13 @@ class Extension {
                             of the current workspace changes, it does not move the maximized window to an unrelated
                             window.
                         */
+                        if(new_workspace) {
                         maximized_windows[id] = {
                             workspace: new_workspace.index(),
                             monitor: monitor
                         }; // Mark window as maximized
                         tiling.tile_workspace_windows(workspace, false, monitor, false); // Sort the workspace where the window came from
+                        }
                     }, 30);
                 }
             } else if(mode === 3 || mode === 1) { // If the window was unmaximized
