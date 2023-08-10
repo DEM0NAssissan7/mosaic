@@ -1,5 +1,6 @@
 uuid="mosaic@mawitime"
 files=(
+    "drawing.js"
     "enums.js"
     "extension.js"
     "metadata.json"
