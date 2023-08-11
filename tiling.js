@@ -4,6 +4,8 @@ const windowing = extension.imports.windowing;
 const reordering = extension.imports.reordering;
 const drawing = extension.imports.drawing;
 
+var masks = [];
+
 class window_descriptor{
     constructor(meta_window, index) {
         let frame = meta_window.get_frame_rect();
@@ -178,7 +180,7 @@ function get_working_info(workspace, window, monitor) {
     // Apply window layout overrides
     let windows = [];
     for(let window of _windows)
-        windows.push(overrides.get_override(workspace, window));
+        windows.push(get_mask(window));
 
     let work_area = workspace.get_work_area_for_monitor(current_monitor); // Get working area for current space
     if(!work_area) return false;
@@ -208,6 +210,34 @@ function draw_tile(tile_info, work_area, meta_windows) {
             x += level.width + enums.window_spacing;
         }
     }
+}
+
+class Mask{
+    constructor(window) {
+        this.x = window.x;
+        this.y = window.y;
+        this.width = window.width;
+        this.height = window.height;
+    }
+    draw(_, x, y) {
+        drawing.remove_boxes();
+        drawing.rect(x, y, this.width, this.height);
+    }
+}
+
+function create_mask(meta_window) {
+    masks[meta_window.get_id()] = true;
+}
+
+function destroy_masks() {
+    drawing.remove_boxes();
+    masks = [];
+}
+
+function get_mask(window) {
+    if(masks[window.id])
+        return new Mask(window);
+    return window;
 }
 
 function tile_workspace_windows(workspace, reference_meta_window, _monitor, keep_oversized_windows) {
