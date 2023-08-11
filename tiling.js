@@ -2,6 +2,7 @@ const extension = imports.misc.extensionUtils.getCurrentExtension();
 const enums = extension.imports.enums;
 const windowing = extension.imports.windowing;
 const reordering = extension.imports.reordering;
+const drawing = extension.imports.drawing;
 
 class window_descriptor{
     constructor(meta_window, index) {
