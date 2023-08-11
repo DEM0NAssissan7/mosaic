@@ -12,8 +12,7 @@ class window_descriptor{
         this.y = 0;
         this.width = frame.width;
         this.height = frame.height;
-        this.maximized_horizontally = meta_window.maximized_horizontally;
-        this.maximized_vertically = meta_window.maximized_vertically;
+        this.id = meta_window.get_id();
     }
     draw(meta_windows, x, y) {
         windowing.move_window(meta_windows[this.index],
