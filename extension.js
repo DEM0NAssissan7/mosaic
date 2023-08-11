@@ -22,6 +22,7 @@ const extension = imports.misc.extensionUtils.getCurrentExtension();
 const windowing = extension.imports.windowing;
 const tiling = extension.imports.tiling;
 const drawing = extension.imports.drawing;
+const reordering = extension.imports.reordering;
 
 let wm_eventids = [];
 let display_eventids = [];
@@ -160,14 +161,18 @@ class Extension {
         }
     }
 
-    grab_op_begin_handler(_, window, grabpo) {
+    grab_op_begin_handler(_, meta_window, grabpo) {
+        reordering.start_drag(meta_window);
         // tile_window_workspace(window);
     }
     grab_op_end_handler(_, window, grabpo) {
         if(windowing.is_related(window)) {
             if( (grabpo === 1 || grabpo === 1025) && // When a window has moved
                 !(window.maximized_horizontally === true && window.maximized_vertically === true))
+            {
+                reordering.stop_drag(window);
                 tiling.tile_workspace_windows(window.get_workspace(), window, null, true);
+            }
             if(grabpo === 25601) // When released from resizing
                 tile_window_workspace(window);
         }
