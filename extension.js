@@ -161,8 +161,11 @@ class Extension {
         }
     }
 
-    grab_op_begin_handler(_, meta_window, grabpo) {
-        reordering.start_drag(meta_window);
+    grab_op_begin_handler(_, window, grabpo) {
+        if( windowing.is_related(window) &&
+            (grabpo === 1 || grabpo === 1025) && // When a window has moved
+            !(window.maximized_horizontally === true && window.maximized_vertically === true))
+            reordering.start_drag(window);
         // tile_window_workspace(window);
     }
     grab_op_end_handler(_, window, grabpo) {
