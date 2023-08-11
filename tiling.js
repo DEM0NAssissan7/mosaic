@@ -8,8 +8,8 @@ class window_descriptor{
         let frame = meta_window.get_frame_rect();
 
         this.index = index;
-        this.x = 0;
-        this.y = 0;
+        this.x = frame.x;
+        this.y = frame.y;
         this.width = frame.width;
         this.height = frame.height;
         this.id = meta_window.get_id();
