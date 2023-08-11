@@ -22,11 +22,13 @@ To install to your user extensions folder, do the following:
 5. Enable the extension using either an extension manager or by running `gnome-extensions enable mosaic@mawitime`
 
 # Implemented features:
-- Center tiling
+- Mosaic tiling
 - New workspace on maximize
 - Effortless workspace management
+- Dynamic window reording
 
 # Needs work:
+- Tiling algorithm
 - Event listeners
 
 # Missing features:
@@ -35,5 +37,4 @@ To install to your user extensions folder, do the following:
 
 # Needs review:
 - Event listeners
-- Window tiling algorithm
 - APIs
