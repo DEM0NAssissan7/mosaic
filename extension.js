@@ -202,7 +202,7 @@ class Extension {
             global.display.disconnect(eventid);
         for(let eventid of workspace_man_eventids)
             global.workspace_manager.disconnect(eventid);
-        snapping.clear_actors();
+        drawing.clear_actors();
     }
 }
 
