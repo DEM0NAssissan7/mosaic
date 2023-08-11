@@ -276,7 +276,8 @@ class Mask{
     }
     draw(_, x, y) {
         drawing.remove_boxes();
-        drawing.rect(x, y, this.width, this.height);
+        if(tmp_swap.length !== 0)
+            drawing.rect(x, y, this.width, this.height);
     }
 }
 
