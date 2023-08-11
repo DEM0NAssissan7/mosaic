@@ -4,6 +4,8 @@ files=(
     "enums.js"
     "extension.js"
     "metadata.json"
+    "reordering.js"
+    "stylesheet.css"
     "tiling.js"
     "windowing.js"
     "workspace-manager.js"
