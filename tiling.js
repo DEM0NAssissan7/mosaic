@@ -5,6 +5,8 @@ const reordering = extension.imports.reordering;
 const drawing = extension.imports.drawing;
 
 var masks = [];
+var working_windows = [];
+var tmp_swap = [];
 
 class window_descriptor{
     constructor(meta_window, index) {
@@ -169,6 +171,46 @@ function swap_elements (array, index1, index2) {
     array[index2] = tmp;
 }
 
+function set_tmp_swap(id1, id2) {
+    let index1 = null
+    let index2 = null;
+
+    for(let i = 0; i < working_windows.length; i++) {
+        let window = working_windows[i];
+        if(window.id === id1 && index1 === null)
+            index1 = i;
+        if(window.id === id2 && index2 === null)
+            index2 = i;
+    }
+    if(index1 !== null && index2 !== null) {
+        if(index1 === index2) return;
+        tmp_swap = [index1, index2];
+    } else
+        console.error("Could not find both indexes for windows");
+}
+
+function clear_tmp_swap() {
+    tmp_swap = [];
+}
+
+function apply_tmp_swap(workspace) {
+    if(!workspace.swaps)
+        workspace.swaps = [];
+    if(tmp_swap.length !== 0)
+        workspace.swaps.push(tmp_swap);
+}
+
+function apply_swaps(workspace, array) {
+    if(workspace.swaps)
+        for(let swap of workspace.swaps)
+            swap_elements(array, swap[0], swap[1]);
+}
+
+function apply_tmp(array) {
+    if(tmp_swap.length !== 0)
+        swap_elements(array, tmp_swap[0], tmp_swap[1]);
+}
+
 function get_working_info(workspace, window, monitor) {
     if(!workspace) // Failsafe for undefined workspace
         return false;
@@ -184,8 +226,13 @@ function get_working_info(workspace, window, monitor) {
     let meta_windows = windowing.get_monitor_workspace_windows(workspace, current_monitor);
 
     // Put needed window info into an enum so it can be transferred between arrays
-    let _windows = windows_to_descriptors(meta_windows, current_monitor);
-    // Apply window layout overrides
+    let _windows = windows_to_descriptors(meta_windows, current_monitor, workspace);
+    // Apply window layout swaps
+    apply_swaps(workspace, _windows);
+    working_windows = [];
+    _windows.map(window => working_windows.push(window)); // Set working windows before tmp application
+    apply_tmp(_windows);
+    // Apply masks
     let windows = [];
     for(let window of _windows)
         windows.push(get_mask(window));
