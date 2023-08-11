@@ -161,6 +161,14 @@ function tile(windows, work_area) {
     }
 }
 
+function swap_elements (array, index1, index2) {
+    if(!array[index1] || !array[index2])
+        return; // Prevent making swaps for elements that do not exist
+    let tmp = array[index1];
+    array[index1] = array[index2];
+    array[index2] = tmp;
+}
+
 function get_working_info(workspace, window, monitor) {
     if(!workspace) // Failsafe for undefined workspace
         return false;
