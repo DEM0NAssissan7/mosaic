@@ -1,7 +1,7 @@
 const extension = imports.misc.extensionUtils.getCurrentExtension();
 const enums = extension.imports.enums;
 const windowing = extension.imports.windowing;
-const overrides = extension.imports.overrides;
+const reordering = extension.imports.reordering;
 
 class window_descriptor{
     constructor(meta_window, index) {
