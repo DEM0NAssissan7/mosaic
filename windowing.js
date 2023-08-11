@@ -88,7 +88,7 @@ function move_oversized_window(window) {
     let primary_monitor = get_primary_monitor()
     let monitor = window.get_monitor();
     let workspace = window.get_workspace();
-    let switch_to_new = workspace.index() === get_workspace().index();
+    let switch_to_new = workspace.active;
     if(monitor === primary_monitor) // If the window is on the primary monitor
         return move_over_window(window, switch_to_new);
 
