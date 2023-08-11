@@ -183,7 +183,9 @@ function set_tmp_swap(id1, id2) {
             index2 = i;
     }
     if(index1 !== null && index2 !== null) {
-        if(index1 === index2) return;
+        if( index1 === index2 ||
+            (tmp_swap[0] === index2 && tmp_swap[1] === index1))
+            return;
         tmp_swap = [index1, index2];
     } else
         console.error("Could not find both indexes for windows");
