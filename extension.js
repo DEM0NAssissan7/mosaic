@@ -168,10 +168,10 @@ class Extension {
     }
     grab_op_end_handler(_, window, grabpo) {
         if(windowing.is_related(window)) {
+            reordering.stop_drag(window);
             if( (grabpo === 1 || grabpo === 1025) && // When a window has moved
                 !(window.maximized_horizontally === true && window.maximized_vertically === true))
             {
-                reordering.stop_drag(window);
                 tiling.tile_workspace_windows(window.get_workspace(), window, null, true);
             }
             if(grabpo === 25601) // When released from resizing
