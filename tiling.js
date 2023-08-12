@@ -324,6 +324,7 @@ function tile_workspace_windows(workspace, reference_meta_window, _monitor, keep
         tile_info = tile(_windows, work_area);
     }
     draw_tile(tile_info, work_area, meta_windows);
+    return overflow;
 }
 
 function window_fits(window, workspace, monitor) {
