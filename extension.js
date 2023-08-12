@@ -61,16 +61,14 @@ class Extension {
     }
 
     created_handler(_, window) {
-        let clock = function() {
+        setTimeout(() => {
             if(window.get_monitor() !== null && window.title) {
                 if(window.maximized_horizontally && window.maximized_vertically)
                     windowing.move_oversized_window(window);
                 else
                     tile_window_workspace(window);
-            } else
-                setTimeout(clock, 100);
-        }
-        clock();
+            }
+        }, 80);
     }
 
     destroyed_handler(_, win) {
