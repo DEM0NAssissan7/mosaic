@@ -4,21 +4,16 @@ const windowing = extension.imports.windowing;
 
 var drag_start = false;
 var drag_timeout;
-var child_frame = null;
 
-function cursor_intersects(cursor, frame) {
-    if( cursor.x >= frame.x &&
-        cursor.x <= frame.x + frame.width &&
-        cursor.y >= frame.y &&
-        cursor.y <= frame.y + frame.height)
-        return true;
-    return false;
+function cursor_distance(cursor, frame) {
+    let x = cursor.x - (frame.x + frame.width / 2);
+    let y = cursor.y - (frame.y + frame.height / 2);
+    return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
 }
 
-function drag(meta_window) {
+function drag(meta_window, child_frame, id, windows) {
     let workspace = meta_window.get_workspace();
     let monitor = meta_window.get_monitor();
-    let id = meta_window.get_id();
 
     let _cursor = global.get_pointer();
     let cursor = {
@@ -26,48 +21,49 @@ function drag(meta_window) {
         y: _cursor[1]
     }
 
-    let meta_windows = windowing.get_monitor_workspace_windows(workspace, monitor);
-    tiling.apply_swaps(workspace, meta_windows);
-    tiling.apply_tmp(meta_windows);
-
-    for(let _window of meta_windows) {
-        let frame = _window.get_frame_rect();
-        let _id = _window.get_id();
-        if(cursor_intersects(cursor, frame) && id !== _id) {
-            tiling.set_tmp_swap(id, _id);
-            break;
+    let minimum_distance = Infinity;
+    let target_id = null;
+    for(let window of windows) {
+        let distance = cursor_distance(cursor, window);
+        if(distance < minimum_distance)
+        {
+            minimum_distance = distance;
+            target_id = window.id;
         }
     }
 
     // Check intersection with original window position
-    if(cursor_intersects(cursor, child_frame))
+    if(target_id === id || target_id === null)
         tiling.clear_tmp_swap();
+    else
+        tiling.set_tmp_swap(id, target_id);
 
-    tiling.tile_workspace_windows(workspace, null, monitor);
+    if(tiling.tile_workspace_windows(workspace, null, monitor)) {
+        tiling.clear_tmp_swap();
+        tiling.tile_workspace_windows(workspace, null, monitor)
+    }
+
     if(drag_start)
-        drag_timeout = setTimeout(() => { drag(meta_window); }, 50);
+        drag_timeout = setTimeout(() => { drag(meta_window, child_frame, id, windows); }, 50);
 }
 
 function start_drag(meta_window) {
+    let workspace = meta_window.get_workspace()
+    let monitor = meta_window.get_monitor();
+    let meta_windows = windowing.get_monitor_workspace_windows(workspace, monitor);
+    tiling.apply_swaps(workspace, meta_windows);
+    let descriptors = tiling.windows_to_descriptors(meta_windows, monitor);
+
     tiling.create_mask(meta_window);
     tiling.clear_tmp_swap();
-    
-    let frame = meta_window.get_frame_rect();
-    child_frame = {
-        x: frame.x,
-        y: frame.y,
-        width: frame.width,
-        height: frame.height
-    }
-    
+
     drag_start = true;
-    drag(meta_window);
+    drag(meta_window, meta_window.get_frame_rect(), meta_window.get_id(), JSON.parse(JSON.stringify(descriptors)));
 }
 
 function stop_drag(meta_window, skip_apply) {
     let workspace = meta_window.get_workspace();
     drag_start = false;
-    child_frame = null;
     clearTimeout(drag_timeout);
  
     tiling.destroy_masks();
