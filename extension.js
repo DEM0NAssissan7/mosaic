@@ -64,7 +64,7 @@ class Extension {
         setTimeout(() => {
             let monitor = window.get_monitor();
             let workspace = window.get_workspace();
-            if(monitor !== null) {
+            if(monitor !== null && windowing.is_related(window)) {
                 if((window.maximized_horizontally && window.maximized_vertically) || !tiling.window_fits(window, workspace, monitor))
                     windowing.move_oversized_window(window);
                 else
