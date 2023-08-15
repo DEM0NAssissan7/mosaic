@@ -73,7 +73,7 @@ class Extension {
                 } else
                     tile_window_workspace(window);
             }
-        }, 40);
+        }, 100);
     }
 
     destroyed_handler(_, win) {
