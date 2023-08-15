@@ -62,8 +62,10 @@ class Extension {
 
     created_handler(_, window) {
         setTimeout(() => {
-            if(window.get_monitor() !== null && window.title) {
-                if(window.maximized_horizontally && window.maximized_vertically)
+            let monitor = window.get_monitor();
+            let workspace = window.get_workspace();
+            if(monitor !== null) {
+                if((window.maximized_horizontally && window.maximized_vertically) || !tiling.window_fits(window, workspace, monitor))
                     windowing.move_oversized_window(window);
                 else
                     tile_window_workspace(window);
