@@ -109,9 +109,7 @@ function is_primary(window) {
 }
 
 function is_excluded(meta_window) {
-    if( meta_window.is_hidden() ||
-        meta_window.is_attached_dialog() ||
-        meta_window.window_type !== 0 ||
+    if( !is_related(meta_window) ||
         meta_window.is_on_all_workspaces()
     )
         return true;
