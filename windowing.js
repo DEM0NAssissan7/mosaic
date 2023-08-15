@@ -59,7 +59,7 @@ function move_over_window(window, switch_to_new, _monitor) {
 
         let offset = global.display.get_monitor_geometry(monitor).height - workspace.get_work_area_for_monitor(monitor).height; // Get top bar offset (if applicable)
         let frame = window.get_frame_rect();
-        move_window(window, false, 0, offset, frame.width, frame.height - offset); // Move window to display properly
+        move_window(window, false, frame.x, frame.y + offset, frame.width, frame.height - offset); // Move window to display properly
     }
 
     if(switch_to_new)
