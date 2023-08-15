@@ -60,7 +60,7 @@ class Extension {
         }
     }
 
-    created_handler(_, window) {
+    window_created_handler(_, window) {
         setTimeout(() => {
             let monitor = window.get_monitor();
             let workspace = window.get_workspace();
@@ -190,7 +190,7 @@ class Extension {
         
         wm_eventids.push(global.window_manager.connect('size-change', this.size_change_handler));
         wm_eventids.push(global.window_manager.connect('size-changed', this.size_changed_handler));
-        display_eventids.push(global.display.connect('window-created', this.created_handler));
+        display_eventids.push(global.display.connect('window-created', this.window_created_handler));
         wm_eventids.push(global.window_manager.connect('destroy', this.destroyed_handler));
         display_eventids.push(global.display.connect("grab-op-begin", this.grab_op_begin_handler));
         display_eventids.push(global.display.connect("grab-op-end", this.grab_op_end_handler));
