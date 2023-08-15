@@ -65,9 +65,12 @@ class Extension {
             let monitor = window.get_monitor();
             let workspace = window.get_workspace();
             if(monitor !== null) {
-                if(((window.maximized_horizontally && window.maximized_vertically) || !tiling.window_fits(window, workspace, monitor)) && windowing.is_related(window))
+                if(((window.maximized_horizontally && window.maximized_vertically) ||
+                    !tiling.window_fits(window, workspace, monitor)) &&
+                    windowing.is_related(window))
+                {
                     windowing.move_oversized_window(window);
-                else
+                } else
                     tile_window_workspace(window);
             }
         }, 40);
