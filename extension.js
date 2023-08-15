@@ -68,7 +68,7 @@ class Extension {
                 else
                     tile_window_workspace(window);
             }
-        }, 80);
+        }, 40);
     }
 
     destroyed_handler(_, win) {
