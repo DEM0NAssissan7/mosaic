@@ -65,7 +65,9 @@ class Extension {
             let monitor = window.get_monitor();
             let workspace = window.get_workspace();
             if(monitor !== null) {
-                if(((window.maximized_horizontally && window.maximized_vertically) ||
+                if(((window.maximized_horizontally &&
+                    window.maximized_vertically &&
+                    windowing.get_all_workspace_windows(monitor).length > 1) ||
                     !tiling.window_fits(window, workspace, monitor)) &&
                     windowing.is_related(window))
                 {
