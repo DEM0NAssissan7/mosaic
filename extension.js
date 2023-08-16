@@ -60,8 +60,20 @@ class Extension {
         }
     }
 
-    window_created_handler(_, meta_window) {
+    window_created_handler(_, window) {
         setTimeout(() => {
+            let workspace = window.get_workspace();
+            let monitor = window.get_monitor();
+            if(monitor !== null && !windowing.is_excluded(window)){
+                if((window.maximized_horizontally &&
+                    window.maximized_vertically &&
+                    windowing.get_monitor_workspace_windows(workspace, monitor).length > 1) ||
+                    !tiling.window_fits(window, workspace, monitor))
+                {
+                    windowing.move_oversized_window(window);
+                } else
+                    tile_window_workspace(window);
+            }
         }, 100);
     }
 
