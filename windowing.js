@@ -72,6 +72,7 @@ function move_over_window(window, switch_to_new, _monitor) {
 
 function move_back_window(window) {
     let workspace = window.get_workspace();
+    let active = workspace.active;
     let previous_workspace = workspace.get_neighbor(-3);
     if(!previous_workspace) {
         console.error("There is no workspace to the left.");
@@ -80,7 +81,8 @@ function move_back_window(window) {
     if(!tiling.window_fits(window, previous_workspace)) // Make sure there is space for the window in the previous workspace
         return workspace;
     window.change_workspace(previous_workspace); // Move window to previous workspace
-    previous_workspace.activate(get_timestamp()); // Switch to it
+    if(active)
+        previous_workspace.activate(get_timestamp()); // Switch to it
     return previous_workspace;
 }
 
