@@ -6,6 +6,7 @@ files=(
     "metadata.json"
     "reordering.js"
     "stylesheet.css"
+    "tilegroups.js"
     "tiling.js"
     "windowing.js"
 )
