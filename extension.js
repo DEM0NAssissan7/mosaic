@@ -62,23 +62,7 @@ class Extension {
 
     window_created_handler(_, meta_window) {
         setTimeout(() => {
-            if(windowing.is_related(meta_window)) {
-                let workspace = meta_window.get_workspace();
-                let monitor = meta_window.get_monitor();
-                let windows = windowing.get_monitor_workspace_windows(workspace, monitor);
-                let window = windows[windows.length - 1];
-                if(monitor !== null && !windowing.is_excluded(window)) {
-                    if((window.maximized_horizontally &&
-                        window.maximized_vertically &&
-                        windows.length > 1) ||
-                        !tiling.window_fits(window, workspace, monitor))
-                    {
-                        windowing.move_oversized_window(window);
-                    } else
-                        tile_window_workspace(window);
-                }
-            }
-        }, 10);
+        }, 100);
     }
 
     destroyed_handler(_, win) {
