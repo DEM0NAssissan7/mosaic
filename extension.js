@@ -101,8 +101,6 @@ class Extension {
             workspace.index() !== workspace_manager.get_n_workspaces() - 1)
         {
             previous_workspace.activate(windowing.get_timestamp());
-            tiling.tile_workspace_windows(previous_workspace, false, monitor);
-            return;
         }
     }
     
