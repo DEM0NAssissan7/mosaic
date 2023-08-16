@@ -42,34 +42,6 @@ function get_monitor_workspace_windows(workspace, monitor, allow_unrelated) {
     return _windows;
 }
 
-
-function move_over_window(window, switch_to_new, _monitor) {
-    let previous_workspace = window.get_workspace();
-
-    let workspace = global.workspace_manager.append_new_workspace(false, get_timestamp());
-
-    window.change_workspace(workspace); // Move window to new workspace
-    global.workspace_manager.reorder_workspace(workspace, previous_workspace.index() + 1);
-
-    if(window.maximized_horizontally && window.maximized_vertically) { // Adjust the window positioning if it is maximized\
-        let monitor = window.get_monitor();
-        if(_monitor !== null && _monitor !== false)
-            monitor = _monitor;
-        if(monitor === null) return;
-
-        let offset = global.display.get_monitor_geometry(monitor).height - workspace.get_work_area_for_monitor(monitor).height; // Get top bar offset (if applicable)
-        let frame = window.get_frame_rect();
-        move_window(window, false, frame.x, frame.y + offset, frame.width, frame.height - offset); // Move window to display properly
-    }
-
-    if(switch_to_new)
-        workspace.activate(get_timestamp()); // Switch to new workspace if specified
-
-    tiling.tile_workspace_windows(workspace, window, null, true); // Tile new workspace for window
-
-    return workspace;
-}
-
 function move_back_window(window) {
     let workspace = window.get_workspace();
     let active = workspace.active;
@@ -86,22 +58,23 @@ function move_back_window(window) {
     return previous_workspace;
 }
 
-function move_oversized_window(window) {
-    let primary_monitor = get_primary_monitor()
+function move_oversized_window(window){
+    let previous_workspace = window.get_workspace();
+    let new_workspace = global.workspace_manager.append_new_workspace(previous_workspace.active, get_timestamp());
     let monitor = window.get_monitor();
-    let workspace = window.get_workspace();
-    let switch_to_new = workspace.active;
-    if(monitor === primary_monitor) // If the window is on the primary monitor
-        return move_over_window(window, switch_to_new);
 
-    // let n_monitors = global.display.get_n_monitors();
-    // for(let i = 0; i < n_monitors; i++) {
-    //     if(tiling.window_fits(window, workspace, i)) {
-    //         window.move_to_monitor(i); // Move to monitor if there is space
-    //         return workspace;
-    //     }
-    // }
-    return move_over_window(window, switch_to_new, primary_monitor); // Move window to primary monitor if it can't fit in any other monitor.
+    window.change_workspace(new_workspace);
+    global.workspace_manager.reorder_workspace(new_workspace, previous_workspace.index() + 1);
+
+    if(window.maximized_horizontally && window.maximized_vertically) { // Adjust the window positioning if it is maximized
+        let offset = global.display.get_monitor_geometry(monitor).height - workspace.get_work_area_for_monitor(monitor).height; // Get top bar offset (if applicable)
+        let frame = window.get_frame_rect();
+        move_window(window, false, 0, offset, frame.width, frame.height - offset); // Move window to display properly
+    }
+    
+    tiling.tile_workspace_windows(new_workspace, window, null, true); // Tile new workspace for window
+
+    return new_workspace;
 }
 
 function is_primary(window) {
