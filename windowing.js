@@ -42,6 +42,16 @@ function get_monitor_workspace_windows(workspace, monitor, allow_unrelated) {
     return _windows;
 }
 
+function get_index(window) {
+    let id = window.get_id();
+    let meta_windows = windowing.get_monitor_workspace_windows(window.get_workspace(), window.get_monitor());
+    for(let i = 0; i < meta_windows.length; i++)
+        if(meta_windows[i].id === id)
+            return i;
+    return null;
+}
+
+
 function move_back_window(window) {
     let workspace = window.get_workspace();
     let active = workspace.active;
