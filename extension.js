@@ -140,7 +140,7 @@ class Extension {
                         tiling.tile_workspace_windows(workspace, false, monitor, false); // Sort the workspace where the window came from
                     }
                 }
-            } else if(mode === 3 || mode === 1) { // If the window was unmaximized
+            } else if(false && (mode === 3 || mode === 1)) { // If the window was unmaximized
                 if( (window.maximized_horizontally === false ||
                     window.maximized_vertically === false) && // If window is not maximized
                     maximized_windows[id] &&
