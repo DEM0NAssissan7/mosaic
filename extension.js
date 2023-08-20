@@ -63,10 +63,10 @@ class Extension {
     window_created_handler(_, window) {
         let timeout;
         let a = () => {
-            clearTimeout(timeout);
             let workspace = window.get_workspace();
             let monitor = window.get_monitor();
             if(monitor !== null && window.wm_class !== null && window.get_compositor_private() && workspace.list_windows().length !== 0 && !window.is_hidden()) {
+                clearTimeout(timeout);
                 if(windowing.is_related(window)) {
                     if((window.maximized_horizontally &&
                         window.maximized_vertically &&
@@ -76,10 +76,9 @@ class Extension {
                     else
                         tiling.tile_workspace_windows(workspace, window, monitor, false);
                 }
-            } else
-                timeout = setTimeout(a, 10);
+            }
         }
-        a();
+        timeout = setInterval(a, 10);
     }
 
     destroyed_handler(_, win) {
