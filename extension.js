@@ -93,7 +93,8 @@ class Extension {
                 global.display.get_focus_window(),
                 null,
                 true);
-            windowing.renavigate(window.get_workspace(), windowing.get_monitor_workspace_windows(workspace, monitor).length === 0);
+            let workspace = window.get_workspace()
+            windowing.renavigate(workspace, windowing.get_monitor_workspace_windows(workspace, monitor).length === 0);
         }
     }
     
@@ -167,9 +168,11 @@ class Extension {
                 !(window.maximized_horizontally === true && window.maximized_vertically === true))
             {
                 let workspace = window.get_workspace();
-                tiling.tile_workspace_windows(workspace, window, null, true);
+                let primary_monitor = global.display.get_primary_monitor();
+                console.log("Primary: " + primary_monitor)
+                tiling.tile_workspace_windows(workspace, null, primary_monitor, true);
                 windowing.renavigate( workspace,
-                            windowing.get_monitor_workspace_windows(workspace, global.display.get_primary_monitor()).length === 0
+                            windowing.get_monitor_workspace_windows(workspace, primary_monitor).length === 0
                             );
             }
             if(grabpo === 25601) // When released from resizing
