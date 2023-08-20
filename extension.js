@@ -185,7 +185,8 @@ class Extension {
             }
             if(grabpo === 25601) // When released from resizing
                 tile_window_workspace(window);
-        }
+        } else
+            reordering.stop_drag(window, true);
     }
 
     workspace_created_handler(_, index) {
