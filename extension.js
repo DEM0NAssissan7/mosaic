@@ -93,7 +93,7 @@ class Extension {
                 global.display.get_focus_window(),
                 null,
                 true);
-            renavigate(window.get_workspace(), windowing.get_monitor_workspace_windows(workspace, monitor).length === 0);
+            windowing.renavigate(window.get_workspace(), windowing.get_monitor_workspace_windows(workspace, monitor).length === 0);
         }
     }
     
@@ -168,7 +168,7 @@ class Extension {
             {
                 let workspace = window.get_workspace();
                 tiling.tile_workspace_windows(workspace, window, null, true);
-                renavigate( workspace,
+                windowing.renavigate( workspace,
                             windowing.get_monitor_workspace_windows(workspace, global.display.get_primary_monitor()).length === 0
                             );
             }
