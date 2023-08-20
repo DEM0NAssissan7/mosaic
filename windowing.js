@@ -65,6 +65,7 @@ function move_back_window(window) {
 
 function move_oversized_window(window){
     let previous_workspace = window.get_workspace();
+    let focus = window.has_focus();
     let new_workspace = global.workspace_manager.append_new_workspace(previous_workspace.active, get_timestamp());
     let monitor = window.get_monitor();
 
@@ -78,7 +79,9 @@ function move_oversized_window(window){
     }
     
     setTimeout(() => {
-    tiling.tile_workspace_windows(new_workspace, window, null, true); // Tile new workspace for window
+        tiling.tile_workspace_windows(new_workspace, window, null, true); // Tile new workspace for window
+        if(focus)
+            window.focus(windowing.get_timestamp());
     }, 50);
 
     return new_workspace;
