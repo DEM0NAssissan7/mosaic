@@ -61,20 +61,24 @@ class Extension {
     }
 
     window_created_handler(_, window) {
-        setTimeout(() => {
+        let a = () => {
             let workspace = window.get_workspace();
             let monitor = window.get_monitor();
-            if(monitor !== null && !windowing.is_excluded(window)){
-                if((window.maximized_horizontally &&
-                    window.maximized_vertically &&
-                    windowing.get_monitor_workspace_windows(workspace, monitor).length > 1) ||
-                    !tiling.window_fits(window, workspace, monitor))
-                {
-                    windowing.move_oversized_window(window);
-                } else
-                    tile_window_workspace(window);
-            }
-        }, 100);
+            if(monitor !== null && window.wm_class !== null && window.get_compositor_private() && workspace) {
+                if(!windowing.is_excluded(window)){
+                    if((window.maximized_horizontally &&
+                        window.maximized_vertically &&
+                        windowing.get_monitor_workspace_windows(workspace, monitor).length !== 1) ||
+                        !tiling.window_fits(window, workspace, monitor))
+                    {
+                        windowing.move_oversized_window(window);
+                    } else
+                        tile_window_workspace(window);
+                }
+            } else
+                setTimeout(a, 10);
+        }
+        a();
     }
 
     destroyed_handler(_, win) {
@@ -201,6 +205,7 @@ class Extension {
 
         // Sort all workspaces at startup
         setTimeout(this.tile_all_workspaces, 300);
+        setInterval(this.tile_all_workspaces, 60000 * 5); // Tile all windows every 5 minutes (in case the machine/display goes to sleep)
     }
 
     disable() {
