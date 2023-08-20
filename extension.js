@@ -166,7 +166,11 @@ class Extension {
             if( (grabpo === 1 || grabpo === 1025) && // When a window has moved
                 !(window.maximized_horizontally === true && window.maximized_vertically === true))
             {
-                tiling.tile_workspace_windows(window.get_workspace(), window, null, true);
+                let workspace = window.get_workspace();
+                tiling.tile_workspace_windows(workspace, window, null, true);
+                renavigate( workspace,
+                            windowing.get_monitor_workspace_windows(workspace, global.display.get_primary_monitor()).length === 0
+                            );
             }
             if(grabpo === 25601) // When released from resizing
                 tile_window_workspace(window);
