@@ -71,15 +71,16 @@ function move_oversized_window(window){
 
     window.change_workspace(new_workspace);
     global.workspace_manager.reorder_workspace(new_workspace, previous_workspace.index() + 1);
-
-    if(window.maximized_horizontally && window.maximized_vertically) { // Adjust the window positioning if it is maximized
-        let offset = global.display.get_monitor_geometry(monitor).height - previous_workspace.get_work_area_for_monitor(monitor).height; // Get top bar offset (if applicable)
-        let frame = window.get_frame_rect();
-        window.move_resize_frame(false, 0, offset, frame.width, frame.height - offset); // Move window to display properly
-    }
     
     setTimeout(() => {
         tiling.tile_workspace_windows(new_workspace, window, null, true); // Tile new workspace for window
+
+        if(window.maximized_horizontally && window.maximized_vertically) { // Adjust the window positioning if it is maximized
+            let offset = global.display.get_monitor_geometry(monitor).height - previous_workspace.get_work_area_for_monitor(monitor).height; // Get top bar offset (if applicable)
+            let frame = window.get_frame_rect();
+            window.move_resize_frame(false, 0, offset, frame.width, frame.height - offset); // Move window to display properly
+        }
+        
         if(focus)
             window.focus(get_timestamp());
     }, 50);
