@@ -61,7 +61,9 @@ class Extension {
     }
 
     window_created_handler(_, window) {
+        let timeout;
         let a = () => {
+            clearTimeout(a);
             let workspace = window.get_workspace();
             let monitor = window.get_monitor();
             if(monitor !== null && window.wm_class !== null && window.get_compositor_private() && workspace.list_windows().length !== 0 && !window.is_hidden()) {
@@ -75,7 +77,7 @@ class Extension {
                         tiling.tile_workspace_windows(workspace, window, monitor, false);
                 }
             } else
-                setTimeout(a, 10);
+                timeout = setTimeout(a, 10);
         }
         a();
     }
