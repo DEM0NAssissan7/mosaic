@@ -87,28 +87,30 @@ class Extension {
 
     destroyed_handler(_, win) {
         let window = win.meta_window;
-        let workspace = window.get_workspace();
-        let previous_workspace = workspace.get_neighbor(-3);
         let monitor = window.get_monitor();
-
-        tiling.tile_workspace_windows(windowing.get_workspace(), 
-            global.display.get_focus_window(),
-            null,
-            true);
-
-        if(previous_workspace === 1 || previous_workspace.index() === workspace.index() || !previous_workspace) {
-            previous_workspace = workspace.get_neighbor(-4); // The new workspace will be the one on the right instead.
-            // Recheck to see if it is still a problematic workspace
-            if( previous_workspace === 1 ||
-                previous_workspace.index() === workspace.index() ||
-                previous_workspace.index() === global.workspace_manager.get_n_workspaces() - 1)
-                return;
-        }
-        
-        if( windowing.get_monitor_workspace_windows(workspace, monitor).length === 0 &&
-            workspace.index() !== workspace_manager.get_n_workspaces() - 1)
-        {
-            previous_workspace.activate(windowing.get_timestamp());
+        if(monitor === global.display.get_primary_monitor()) {
+            let previous_workspace = workspace.get_neighbor(-3);
+            let workspace = window.get_workspace();
+    
+            tiling.tile_workspace_windows(windowing.get_workspace(), 
+                global.display.get_focus_window(),
+                null,
+                true);
+    
+            if(previous_workspace === 1 || previous_workspace.index() === workspace.index() || !previous_workspace) {
+                previous_workspace = workspace.get_neighbor(-4); // The new workspace will be the one on the right instead.
+                // Recheck to see if it is still a problematic workspace
+                if( previous_workspace === 1 ||
+                    previous_workspace.index() === workspace.index() ||
+                    previous_workspace.index() === global.workspace_manager.get_n_workspaces() - 1)
+                    return;
+            }
+            
+            if( windowing.get_monitor_workspace_windows(workspace, monitor).length === 0 &&
+                workspace.index() !== workspace_manager.get_n_workspaces() - 1)
+            {
+                previous_workspace.activate(windowing.get_timestamp());
+            }
         }
     }
     
