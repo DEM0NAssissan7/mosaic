@@ -125,6 +125,6 @@ function renavigate(workspace, condition) {
     if( condition &&
         workspace.index() !== global.workspace_manager.get_n_workspaces() - 1)
     {
-        previous_workspace.activate(windowing.get_timestamp());
+        previous_workspace.activate(get_timestamp());
     }
 }
