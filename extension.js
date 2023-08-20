@@ -75,7 +75,7 @@ class Extension {
                 if(windowing.is_related(window)) {
                     if((window.maximized_horizontally &&
                         window.maximized_vertically &&
-                        windowing.get_monitor_workspace_windows(workspace, monitor).length !== 1) ||
+                        windowing.get_monitor_workspace_windows(workspace, monitor).length > 1) ||
                         !tiling.window_fits(window, workspace, monitor))
                         windowing.move_oversized_window(window);
                     else
