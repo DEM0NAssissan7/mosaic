@@ -20,13 +20,18 @@ class window_descriptor{
         this.id = meta_window.get_id();
     }
     draw(meta_windows, x, y) {
-        meta_windows[this.index].move_frame( false,
-                                                    x,
-                                                    y);
+        meta_windows[this.index].move_frame(false,
+                                            x,
+                                            y);
     }
 }
 
-function create_descriptor(meta_window, monitor, index) {
+function create_descriptor(meta_window, monitor, index, reference_window) {
+    // If the input window is the same as the reference, make a descriptor for it anyways
+    if(reference_window)
+        if(meta_window.get_id() === reference_window.get_id())
+            return new window_descriptor(meta_window, index);
+    
     if( windowing.is_excluded(meta_window) ||
         meta_window.get_monitor() !== monitor ||
         (meta_window.maximized_horizontally && meta_window.maximized_horizontally))
@@ -34,10 +39,10 @@ function create_descriptor(meta_window, monitor, index) {
     return new window_descriptor(meta_window, index);
 }
 
-function windows_to_descriptors(meta_windows, monitor) {
+function windows_to_descriptors(meta_windows, monitor, reference_window) {
     let descriptors = [];
     for(let i = 0; i < meta_windows.length; i++) {
-        let descriptor = create_descriptor(meta_windows[i], monitor, i);
+        let descriptor = create_descriptor(meta_windows[i], monitor, i, reference_window);
         if(descriptor)
             descriptors.push(descriptor);
     }
@@ -225,7 +230,7 @@ function get_working_info(workspace, window, monitor) {
     let meta_windows = windowing.get_monitor_workspace_windows(workspace, current_monitor);
 
     // Put needed window info into an enum so it can be transferred between arrays
-    let _windows = windows_to_descriptors(meta_windows, current_monitor, workspace);
+    let _windows = windows_to_descriptors(meta_windows, current_monitor, window);
     // Apply window layout swaps
     apply_swaps(workspace, _windows);
     working_windows = [];
