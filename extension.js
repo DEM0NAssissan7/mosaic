@@ -65,7 +65,13 @@ class Extension {
         let a = () => {
             let workspace = window.get_workspace();
             let monitor = window.get_monitor();
-            if(monitor !== null && window.wm_class !== null && window.get_compositor_private() && workspace.list_windows().length !== 0 && !window.is_hidden()) {
+            // Ensure window is valid before performing any actions
+            if( monitor !== null &&
+                window.wm_class !== null &&
+                window.get_compositor_private() &&
+                workspace.list_windows().length !== 0 &&
+                !window.is_hidden())
+            {
                 clearTimeout(timeout);
                 if(windowing.is_related(window)) {
                     if((window.maximized_horizontally &&
