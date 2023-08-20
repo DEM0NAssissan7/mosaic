@@ -51,7 +51,6 @@ function get_index(window) {
     return null;
 }
 
-
 function move_back_window(window) {
     let workspace = window.get_workspace();
     let active = workspace.active;
