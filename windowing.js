@@ -82,7 +82,7 @@ function move_oversized_window(window){
         tiling.tile_workspace_windows(new_workspace, window, null, true); // Tile new workspace for window
         if(focus)
             window.focus(windowing.get_timestamp());
-    }, 50);
+    }, 150);
 
     return new_workspace;
 }
