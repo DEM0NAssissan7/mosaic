@@ -124,7 +124,7 @@ class Extension {
             let monitor = window.get_monitor();
 
             if(mode === 2 || mode === 0) { // If the window was maximized
-                if(window.maximized_horizontally === true && window.maximized_vertically === true && windowing.get_all_workspace_windows(monitor).length > 1) {
+                if(window.maximized_horizontally === true && window.maximized_vertically === true && windowing.get_monitor_workspace_windows(workspace, monitor).length > 1) {
                     // If maximized (and not alone), move to new workspace and activate it if it is on the active workspace
                     let new_workspace = windowing.move_oversized_window(window);
                     /* We mark the window as activated by using its id to index an array
@@ -144,7 +144,7 @@ class Extension {
                 if( (window.maximized_horizontally === false ||
                     window.maximized_vertically === false) && // If window is not maximized
                     maximized_windows[id] &&
-                    windowing.get_all_workspace_windows(monitor).length === 1// If the workspace anatomy has not changed
+                    windowing.get_monitor_workspace_windows(workspace, monitor).length === 1// If the workspace anatomy has not changed
                 ) {
                     if( maximized_windows[id].workspace === workspace.index() &&
                         maximized_windows[id].monitor === monitor
