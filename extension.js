@@ -61,8 +61,7 @@ class Extension {
     }
 
     window_created_handler(_, window) {
-        let timeout;
-        let a = () => {
+        let timeout = setInterval(() => {
             let workspace = window.get_workspace();
             let monitor = window.get_monitor();
             // Ensure window is valid before performing any actions
@@ -83,8 +82,7 @@ class Extension {
                         tiling.tile_workspace_windows(workspace, window, monitor, false);
                 }
             }
-        }
-        timeout = setInterval(a, 10);
+        }, 10);
     }
 
     destroyed_handler(_, win) {
