@@ -73,7 +73,7 @@ class Extension {
                     {
                         windowing.move_oversized_window(window);
                     } else
-                        tile_window_workspace(window);
+                        tiling.tile_workspace_windows(workspace, null, monitor, true);
                 }
             } else
                 setTimeout(a, 10);
