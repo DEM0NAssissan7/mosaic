@@ -77,7 +77,9 @@ function move_oversized_window(window){
         window.move_resize_frame(false, 0, offset, frame.width, frame.height - offset); // Move window to display properly
     }
     
+    setTimeout(() => {
     tiling.tile_workspace_windows(new_workspace, window, null, true); // Tile new workspace for window
+    }, 50);
 
     return new_workspace;
 }
