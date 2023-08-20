@@ -26,13 +26,13 @@ To install to your user extensions folder, do the following:
 - New workspace on maximize
 - Effortless workspace management
 - Dynamic window reording
+- Snap tiling
 
 # Needs work:
 - Tiling algorithm
 - Event listeners
 
 # Missing features:
-- Corner tiling
 - Automatic snap-tiling
 
 # Needs review:
