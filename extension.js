@@ -137,7 +137,7 @@ class Extension {
                             }; // Mark window as maximized
                             tiling.tile_workspace_windows(workspace, false, monitor, false); // Sort the workspace where the window came from
                         }
-                    }, 30);
+                    }, 10);
                 }
             } else if(mode === 3 || mode === 1) { // If the window was unmaximized
                 if( (window.maximized_horizontally === false ||
