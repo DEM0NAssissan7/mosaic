@@ -171,15 +171,8 @@ class Extension {
             }
             if(grabpo === 25601) // When released from resizing
                 tile_window_workspace(window);
-        } else {
+        } else
             reordering.stop_drag(window, true);
-
-            let primary_monitor = global.display.get_primary_monitor();
-            let workspace = window.get_workspace();
-            windowing.renavigate(   workspace,
-                                    windowing.get_monitor_workspace_windows(workspace, primary_monitor).length === 0);
-            tiling.tile_workspace_windows(workspace, null, primary_monitor, true);
-        }
     }
 
     workspace_created_handler(_, index) {
