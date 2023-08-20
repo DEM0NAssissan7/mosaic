@@ -20,12 +20,9 @@ class window_descriptor{
         this.id = meta_window.get_id();
     }
     draw(meta_windows, x, y) {
-        windowing.move_window(meta_windows[this.index],
-                            false,
-                            x,
-                            y,
-                            this.width,
-                            this.height);
+        meta_windows[this.index].move_frame( false,
+                                                    x,
+                                                    y);
     }
 }
 
