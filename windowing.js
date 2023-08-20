@@ -109,3 +109,22 @@ function is_related(meta_window) {
     ) return true;
     return false;
 }
+
+function renavigate(workspace, condition) {
+    let previous_workspace = workspace.get_neighbor(-3);
+
+    if(previous_workspace === 1 || previous_workspace.index() === workspace.index() || !previous_workspace) {
+        previous_workspace = workspace.get_neighbor(-4); // The new workspace will be the one on the right instead.
+        // Recheck to see if it is still a problematic workspace
+        if( previous_workspace === 1 ||
+            previous_workspace.index() === workspace.index() ||
+            previous_workspace.index() === global.workspace_manager.get_n_workspaces() - 1)
+            return;
+    }
+    
+    if( condition &&
+        workspace.index() !== workspace_manager.get_n_workspaces() - 1)
+    {
+        previous_workspace.activate(windowing.get_timestamp());
+    }
+}
