@@ -29,10 +29,6 @@ function get_all_workspace_windows(monitor, allow_unrelated) {
     return get_monitor_workspace_windows(get_workspace(), monitor, allow_unrelated);
 }
 
-function move_window(window, ignore_top_bar, x, y, w, h) {
-    window.move_resize_frame(ignore_top_bar, x, y, w, h);
-}
-
 function get_monitor_workspace_windows(workspace, monitor, allow_unrelated) {
     let _windows = [];
     let windows = workspace.list_windows();
@@ -78,7 +74,7 @@ function move_oversized_window(window){
     if(window.maximized_horizontally && window.maximized_vertically) { // Adjust the window positioning if it is maximized
         let offset = global.display.get_monitor_geometry(monitor).height - workspace.get_work_area_for_monitor(monitor).height; // Get top bar offset (if applicable)
         let frame = window.get_frame_rect();
-        move_window(window, false, 0, offset, frame.width, frame.height - offset); // Move window to display properly
+        window.move_resize_frame(false, 0, offset, frame.width, frame.height - offset); // Move window to display properly
     }
     
     tiling.tile_workspace_windows(new_workspace, window, null, true); // Tile new workspace for window
