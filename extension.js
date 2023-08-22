@@ -44,6 +44,7 @@ function tile_window_workspace(meta_window) {
 let size_changed = false;
 let event_timeout;
 let expanded_window_timeout;
+let tile_timeout;
 
 class Extension {
     constructor() {
@@ -193,12 +194,13 @@ class Extension {
 
         // Sort all workspaces at startup
         setTimeout(this.tile_all_workspaces, 300);
-        setInterval(this.tile_all_workspaces, 60000 * 5); // Tile all windows every 5 minutes (in case the machine/display goes to sleep)
+        tile_timeout = setInterval(this.tile_all_workspaces, 60000 * 5); // Tile all windows every 5 minutes (in case the machine/display goes to sleep)
     }
 
     disable() {
         console.log("[MOSAIC]: Disabling Mosaic layout manager.");
         // Disconnect all events
+        clearTimeout(tile_timeout);
         for(let eventid of wm_eventids)
             global.window_manager.disconnect(eventid);
         for(let eventid of display_eventids)
