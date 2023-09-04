@@ -3,6 +3,7 @@
   "description": "Next-generation window management",
   "uuid": "mosaic@mawitime",
   "shell-version": [
-    "44"
+    "44",
+    "45"
   ]
 }
