@@ -24,7 +24,7 @@ To install to your user extensions folder, do the following:
 # Implemented features:
 - Mosaic tiling
 - New workspace on maximize
-- Effortless workspace management
+- Automatic workspace creation
 - Dynamic window reording
 
 # Needs work:
@@ -34,6 +34,7 @@ To install to your user extensions folder, do the following:
 # Missing features:
 - Corner tiling
 - Automatic snap-tiling
+- Overflow windows docked away
 
 # Needs review:
 - Event listeners
