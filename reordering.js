@@ -1,16 +1,16 @@
-import tiling from './tiling';
-import windowing from './windowing';
+import * as tiling from './tiling.js';
+import * as windowing from './windowing.js';
 
 var drag_start = false;
 var drag_timeout;
 
-function cursor_distance(cursor, frame) {
+export function cursor_distance(cursor, frame) {
     let x = cursor.x - (frame.x + frame.width / 2);
     let y = cursor.y - (frame.y + frame.height / 2);
     return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
 }
 
-function drag(meta_window, child_frame, id, windows) {
+export function drag(meta_window, child_frame, id, windows) {
     let workspace = meta_window.get_workspace();
     let monitor = meta_window.get_monitor();
 
@@ -46,7 +46,7 @@ function drag(meta_window, child_frame, id, windows) {
         drag_timeout = setTimeout(() => { drag(meta_window, child_frame, id, windows); }, 50);
 }
 
-function start_drag(meta_window) {
+export function start_drag(meta_window) {
     let workspace = meta_window.get_workspace()
     let monitor = meta_window.get_monitor();
     let meta_windows = windowing.get_monitor_workspace_windows(workspace, monitor);
@@ -60,7 +60,7 @@ function start_drag(meta_window) {
     drag(meta_window, meta_window.get_frame_rect(), meta_window.get_id(), JSON.parse(JSON.stringify(descriptors)));
 }
 
-function stop_drag(meta_window, skip_apply) {
+export function stop_drag(meta_window, skip_apply) {
     let workspace = meta_window.get_workspace();
     drag_start = false;
     clearTimeout(drag_timeout);

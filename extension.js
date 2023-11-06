@@ -17,10 +17,10 @@
  */
 
 /* exported init */
-import windowing from './windowing';
-import tiling from './tiling';
-import drawing from './drawing';
-import reordering from './reordering';
+import * as windowing from './windowing.js';
+import * as tiling from './tiling.js';
+import * as drawing from './drawing.js';
+import * as reordering from './reordering.js';
 
 let wm_eventids = [];
 let display_eventids = [];
@@ -44,7 +44,7 @@ let event_timeout;
 let expanded_window_timeout;
 let tile_timeout;
 
-class Extension {
+export default class Extension {
     constructor() {
     }
 

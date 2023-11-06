@@ -1,7 +1,7 @@
-import enums from './enums';
-import windowing from './windowing';
-import reordering from './reordering';
-import drawing from './drawing';
+import * as enums from './enums.js';
+import * as windowing from './windowing.js';
+import * as reordering from './reordering.js';
+import * as drawing from './drawing.js';
 
 var masks = [];
 var working_windows = [];
@@ -38,7 +38,7 @@ function create_descriptor(meta_window, monitor, index, reference_window) {
     return new window_descriptor(meta_window, index);
 }
 
-function windows_to_descriptors(meta_windows, monitor, reference_window) {
+export function windows_to_descriptors(meta_windows, monitor, reference_window) {
     let descriptors = [];
     for(let i = 0; i < meta_windows.length; i++) {
         let descriptor = create_descriptor(meta_windows[i], monitor, i, reference_window);
@@ -172,7 +172,7 @@ function swap_elements (array, index1, index2) {
     array[index2] = tmp;
 }
 
-function set_tmp_swap(id1, id2) {
+export function set_tmp_swap(id1, id2) {
     let index1 = null
     let index2 = null;
 
@@ -192,24 +192,24 @@ function set_tmp_swap(id1, id2) {
         console.error("Could not find both indexes for windows");
 }
 
-function clear_tmp_swap() {
+export function clear_tmp_swap() {
     tmp_swap = [];
 }
 
-function apply_tmp_swap(workspace) {
+export function apply_tmp_swap(workspace) {
     if(!workspace.swaps)
         workspace.swaps = [];
     if(tmp_swap.length !== 0)
         workspace.swaps.push(tmp_swap);
 }
 
-function apply_swaps(workspace, array) {
+export function apply_swaps(workspace, array) {
     if(workspace.swaps)
         for(let swap of workspace.swaps)
             swap_elements(array, swap[0], swap[1]);
 }
 
-function apply_tmp(array) {
+export function apply_tmp(array) {
     if(tmp_swap.length !== 0)
         swap_elements(array, tmp_swap[0], tmp_swap[1]);
 }
@@ -283,22 +283,22 @@ class Mask{
     }
 }
 
-function create_mask(meta_window) {
+export function create_mask(meta_window) {
     masks[meta_window.get_id()] = true;
 }
 
-function destroy_masks() {
+export function destroy_masks() {
     drawing.remove_boxes();
     masks = [];
 }
 
-function get_mask(window) {
+export function get_mask(window) {
     if(masks[window.id])
         return new Mask(window);
     return window;
 }
 
-function tile_workspace_windows(workspace, reference_meta_window, _monitor, keep_oversized_windows) {
+export function tile_workspace_windows(workspace, reference_meta_window, _monitor, keep_oversized_windows) {
     let working_info = get_working_info(workspace, reference_meta_window, _monitor);
     if(!working_info) return;
     let meta_windows = working_info.meta_windows;
@@ -328,7 +328,7 @@ function tile_workspace_windows(workspace, reference_meta_window, _monitor, keep
     return overflow;
 }
 
-function window_fits(window, workspace, monitor) {
+export function window_fits(window, workspace, monitor) {
     let working_info = get_working_info(workspace, window, monitor);
     if(!working_info) return false;
     if(workspace.index() === window.get_workspace().index()) return true;

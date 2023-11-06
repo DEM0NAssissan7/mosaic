@@ -3,7 +3,7 @@ import * as main from 'resource:///org/gnome/shell/ui/main.js';
 
 var boxes = [];
 
-function rect(x, y, width, height) {
+export function rect(x, y, width, height) {
     const box = new st.BoxLayout({ style_class: "feedforward" });
     box.x = x;
     box.y = y;
@@ -13,12 +13,12 @@ function rect(x, y, width, height) {
     main.uiGroup.add_actor(box);
 }
 
-function remove_boxes() {
+export function remove_boxes() {
     for(let box of boxes)
         main.uiGroup.remove_actor(box);
     boxes = [];
 }
 
-function clear_actors() {
+export function clear_actors() {
     remove_boxes();
 }

@@ -1,1 +1,1 @@
-var window_spacing = 8;
+export var window_spacing = 8;
