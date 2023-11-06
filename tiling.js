@@ -1,8 +1,7 @@
-const extension = imports.misc.extensionUtils.getCurrentExtension();
-const enums = extension.imports.enums;
-const windowing = extension.imports.windowing;
-const reordering = extension.imports.reordering;
-const drawing = extension.imports.drawing;
+import enums from './enums';
+import windowing from './windowing';
+import reordering from './reordering';
+import drawing from './drawing';
 
 var masks = [];
 var working_windows = [];

@@ -1,6 +1,5 @@
-const extension = imports.misc.extensionUtils.getCurrentExtension();
-const tiling = extension.imports.tiling;
-const windowing = extension.imports.windowing;
+import tiling from './tiling';
+import windowing from './windowing';
 
 var drag_start = false;
 var drag_timeout;

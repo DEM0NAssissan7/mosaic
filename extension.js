@@ -17,12 +17,10 @@
  */
 
 /* exported init */
-const extension = imports.misc.extensionUtils.getCurrentExtension();
-
-const windowing = extension.imports.windowing;
-const tiling = extension.imports.tiling;
-const drawing = extension.imports.drawing;
-const reordering = extension.imports.reordering;
+import windowing from './windowing';
+import tiling from './tiling';
+import drawing from './drawing';
+import reordering from './reordering';
 
 let wm_eventids = [];
 let display_eventids = [];

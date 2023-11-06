@@ -1,5 +1,4 @@
-const extension = imports.misc.extensionUtils.getCurrentExtension();
-const tiling = extension.imports.tiling;
+import tiling from './tiling';
 
 function get_timestamp() {
     return global.get_current_time();

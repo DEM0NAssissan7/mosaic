@@ -1,5 +1,5 @@
-const st = imports.gi.St;
-const main = imports.ui.main;
+import st from 'gi://St';
+import * as main from 'resource:///org/gnome/shell/ui/main.js';
 
 var boxes = [];
 
