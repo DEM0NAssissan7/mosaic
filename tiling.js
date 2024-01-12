@@ -299,8 +299,6 @@ export function get_mask(window) {
 }
 
 export function tile_workspace_windows(workspace, reference_meta_window, _monitor, keep_oversized_windows) {
-    const workspace_windows = windowing.get_monitor_workspace_windows(workspace, monitor);
-
     let working_info = get_working_info(workspace, reference_meta_window, _monitor);
     if(!working_info) return;
     let meta_windows = working_info.meta_windows;
@@ -308,14 +306,16 @@ export function tile_workspace_windows(workspace, reference_meta_window, _monito
     let work_area = working_info.work_area;
     let monitor = working_info.monitor;
 
+    const workspace_windows = windowing.get_monitor_workspace_windows(workspace, monitor);
+
     let tile_info = tile(windows, work_area);
     let overflow = tile_info.overflow;
 
     if (workspace_windows.length <= 1) {
         overflow = false;
     } else {
-        for(let window of workspace_windows)
-            if(window.maximized_horizontally && window.maximized_vertically)
+        for (let window of workspace_windows)
+            if (window.maximized_horizontally && window.maximized_vertically)
                 overflow = true;
     }
   
