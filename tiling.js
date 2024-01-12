@@ -306,12 +306,19 @@ export function tile_workspace_windows(workspace, reference_meta_window, _monito
     let work_area = working_info.work_area;
     let monitor = working_info.monitor;
 
+    const workspace_windows = windowing.get_monitor_workspace_windows(workspace, monitor);
+
     let tile_info = tile(windows, work_area);
     let overflow = tile_info.overflow;
-    for(let window of windowing.get_monitor_workspace_windows(workspace, monitor))
-        if(window.maximized_horizontally && window.maximized_vertically)
-            overflow = true;
 
+    if (workspace_windows.length <= 1) {
+        overflow = false;
+    } else {
+        for(let window of workspace_windows)
+            if(window.maximized_horizontally && window.maximized_vertically)
+                overflow = true;
+    }
+  
     if(overflow && !keep_oversized_windows && reference_meta_window) { // Overflow clause
         let id = reference_meta_window.get_id();
         let _windows = windows;
