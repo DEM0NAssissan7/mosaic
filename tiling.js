@@ -314,8 +314,8 @@ export function tile_workspace_windows(workspace, reference_meta_window, _monito
     if (workspace_windows.length <= 1) {
         overflow = false;
     } else {
-        for (let window of workspace_windows)
-            if (window.maximized_horizontally && window.maximized_vertically)
+        for(let window of workspace_windows)
+            if(window.maximized_horizontally && window.maximized_vertically)
                 overflow = true;
     }
   
