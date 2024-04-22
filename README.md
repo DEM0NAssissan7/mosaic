@@ -1,4 +1,4 @@
-# Mosaic
+# Window Mosaic mode
 Next-generation window management
 
 # Disclaimer

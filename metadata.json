@@ -1,7 +1,7 @@
 {
-  "name": "Mosaic",
+  "name": "Window Mosaic mode",
   "description": "Next-generation window management",
-  "uuid": "mosaic@mawitime",
+  "uuid": "window-mosaic-mode@heikkiket",
   "shell-version": [
     "44",
     "45",

@@ -1,5 +1,5 @@
 #!/bin/bash
-uuid="mosaic@mawitime"
+uuid="window-mosaic-mode@heikkiket"
 files=(
     "drawing.js"
     "enums.js"
