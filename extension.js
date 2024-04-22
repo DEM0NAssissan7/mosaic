@@ -179,7 +179,7 @@ export default class Extension {
     }
 
     enable() {
-        console.log("[MOSAIC]: Starting Mosaic layout manager.");
+        console.log("[WINDOW MOSAIC]: Starting Mosaic layout manager.");
         
         wm_eventids.push(global.window_manager.connect('size-change', this.size_change_handler));
         wm_eventids.push(global.window_manager.connect('size-changed', this.size_changed_handler));
@@ -196,7 +196,7 @@ export default class Extension {
     }
 
     disable() {
-        console.log("[MOSAIC]: Disabling Mosaic layout manager.");
+        console.log("[WINDOW MOSAIC]: Disabling Mosaic layout manager.");
         // Disconnect all events
         clearTimeout(tile_timeout);
         for(let eventid of wm_eventids)
