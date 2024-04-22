@@ -19,7 +19,7 @@ To install to your user extensions folder, do the following:
 2. Open a terminal in the directory of the project
 3. Run `./install.sh` to install the extension
 4. Log out and log back in
-5. Enable the extension using either an extension manager or by running `gnome-extensions enable mosaic@mawitime`
+5. Enable the extension using either an extension manager or by running `gnome-extensions enable window-mosaic-mode@heikkiket`
 
 # Implemented features:
 - Mosaic tiling
