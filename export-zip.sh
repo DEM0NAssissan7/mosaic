@@ -1,3 +1,4 @@
+#!/bin/bash
 uuid="mosaic@mawitime"
 files=(
     "drawing.js"
